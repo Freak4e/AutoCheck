@@ -33,13 +33,7 @@ Načrt obsega **12 funkcionalnosti**, od tega **7 za MVP**. F03–F07 so domensk
 
 ## Netrivialen delovni proces
 
-```mermaid
-stateDiagram-v2
-    [*] --> BOOKED: Stranka rezervira prost termin
-    BOOKED --> IN_PROGRESS: Preglednik prevzame pregled
-    IN_PROGRESS --> COMPLETED: Vse postavke ocenjene in podatki skladni
-    COMPLETED --> [*]
-```
+![Diagram poteka rezervacije: BOOKED → IN_PROGRESS → COMPLETED](images/potek-pregleda.png)
 
 Stanje poteka hrani rezervacija (`Appointment.status`). Pregled (`Inspection`) hrani ugotovitve in končni izid, ki ni isto kot stanje rezervacije.
 
