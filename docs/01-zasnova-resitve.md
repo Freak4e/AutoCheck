@@ -8,6 +8,8 @@ Rešitev naslavlja nepovezanost podatkov, ki bi jih postaja sicer vodila v loče
 
 Projekt je učna simulacija. Ne predstavlja uradnega sistema za tehnične preglede, ne potrjuje tehnične brezhibnosti vozila in ne izdaja uradnih dokumentov. Pravila izidov so poenostavljena projektna pravila.
 
+V dejanskem postopku je tehnična brezhibnost eden od pogojev za registracijo; potrebni so tudi urejeno obvezno zavarovanje, ustrezne dajatve in zahtevana dokazila. Uspešen tehnični pregled zato še ne pomeni opravljene registracije. [Pogoji registracije vozila – eUprava](https://e-uprava.gov.si/si/podrocja/promet/vozniki-in-vozila/registracija-vozila.html). V AutoCheck izid `PASSED` zaključi samo učni pregled in ne ustvari uradne registracije vozila. Tudi vnos vozila v aplikacijo ni njegova uradna registracija.
+
 ## Ciljni uporabniki
 
 - **Stranka:** lastnik vozila, ki želi izbrati prost termin, preveriti prihajajočo rezervacijo in po pregledu prebrati ugotovitve za svoje vozilo.

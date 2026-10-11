@@ -85,6 +85,21 @@ Po delujočem MVP je predvidenih najmanj pet samostojnih nadgradenj:
 4. Prestavitev še nezačetega termina s sprostitvijo starega (F11).
 5. Statistika opravljenih pregledov po obdobju in izidu (F12).
 
+### Možnosti dolgoročnega razvoja po zaključku študijskega projekta
+
+AutoCheck bi se lahko kasneje razširil v širšo evidenco storitev za vozila. Spodnje ideje niso dodatne obveznosti pri vajah in niso vključene med 12 načrtovanih funkcionalnosti F01–F12.
+
+| Možen modul | Kaj bi omogočal | Povezava s tehničnim pregledom |
+| --- | --- | --- |
+| Evidenca registracije | Beleženje datumov veljavnosti in poteka urejanja registracije ter pregled potrebnih dokazil. | `PASSED` sam ne pomeni registriranega vozila; registracija bi imela ločeno evidenco in pogoje. |
+| Servisiranje vozila | Naročanje na mali ali veliki servis, beleženje kilometrov, opravljenih del in zamenjanih delov ter servisna zgodovina. Vsebina servisa bi bila določena za konkretno vozilo. | Samostojna storitev, na katero se stranka naroči neodvisno od tehničnega pregleda ali namena registracije. Servis ne spremeni že zaključenega izida pregleda. |
+| Podpora postopkom homologacije | Evidenca vloge, zahtevanih dokumentov in napredka postopka ugotavljanja skladnosti vozila. | Ločen postopek za ustrezne primere, npr. uvožena ali predelana vozila; ni samodejni korak po vsakem tehničnem pregledu. |
+| Evidenca uvoza in carinske dokumentacije | Spremljanje države izvora, zbranih dokumentov in opravljenih korakov pri pridobitvi ali uvozu vozila. | Ločen postopek, kadar je potreben. Pridobitev vozila iz EU in uvoz iz tretje države nista enaka primera. |
+
+Za homologacijo in uvoz bi aplikacija najprej zagotavljala organizacijsko podporo, brez izdajanja uradnih odločb ali izvajanja carinjenja. Uradni okvir opisujeta [eUprava – homologacija vozila](https://e-uprava.gov.si/si/podrocja/promet/vozniki-in-vozila/homologacija-vozila.html) in [GOV.SI – uvoz vozila iz tujine](https://www.gov.si/zbirke/storitve/uvoz-vozila-iz-tujine/).
+
+Ob morebitni izvedbi bi novi moduli dobili lastne evidence, delovne procese in ustrezne pravice osebja, povezane z obstoječim vozilom. `Inspection` in njegov kontrolni seznam ostaneta namenjena tehničnemu pregledu; servis, registracija in homologacija ne postanejo dodatna stanja istega pregleda.
+
 ## Izven obsega projekta (out of scope)
 
 - Povezovanje z državnimi evidencami vozil ali preverjanje lastništva v zunanjih registrih.
@@ -95,18 +110,4 @@ Po delujočem MVP je predvidenih najmanj pet samostojnih nadgradenj:
 - Obvestila po e-pošti ali SMS, samostojna mobilna aplikacija in nalaganje fotografij.
 - Odpovedi rezervacij, čakalne vrste, posebna obravnava neprihoda in povezan proces ponovnega pregleda.
 - Prenos vozila med lastniki, brisanje zgodovine in popravljanje že zaključenih pregledov.
-
-## Preverjanje zahtev naloge
-
-| Zahteva | Pokritje |
-| --- | --- |
-| Dinamična spletna rešitev | Obrazci in strani uporabljajo REST API ter PostgreSQL; dokument 04. |
-| Vsaj tri vloge | `CUSTOMER`, `INSPECTOR`, `ADMIN`; tabela vlog zgoraj. |
-| Vsaj tri povezane entitete in trajno shranjevanje | Osem povezanih aplikacijskih tabel v PostgreSQL na Supabase; dokument 03. |
-| Osnovna avtentikacija in upravljanje uporabnikov | F01, začetna računa osebja in strežniško preverjanje pravic. |
-| Netrivialen proces | Rezervacija, atomaren prevzem, ocenjevanje, validacija in zaključek. |
-| 10–15 funkcionalnosti | 12 funkcionalnosti F01–F12. |
-| 5–7 funkcionalnosti MVP, vsaj tri domenske | Sedem funkcionalnosti MVP; pet domenskih F03–F07. |
-| Vsaj pet nadgradenj | F08–F12. |
-| Vsaj tri funkcionalnosti izven obsega | Osem alinej zgoraj. |
-| Nadaljnji razvoj | Ločen frontend in API, relacijski model, shranjene SQL spremembe in kopije postavk pregledov. |
+- Izvedba modulov za registracijo, servisiranje, homologacijo in uvoz oziroma carino v okviru te študijske izvedbe; zgoraj so navedeni samo kot dolgoročne možnosti razvoja.
