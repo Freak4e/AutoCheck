@@ -64,6 +64,8 @@ Vse spodnje poti imajo predpono `/api`. Registracija, prijava in odjava se izvaj
 
 Rezervacija sprejme `vehicleId` in `slotId`, lastnika določi backend. Postavke nastanejo samodejno ob začetku. Končnega izida in stanja rezervacije ni mogoče neposredno nastaviti s poljubnim zahtevkom. Pri poteh s postavko ali napako se preveri tudi njena pripadnost pregledu.
 
+Zahteva za oceno postavke sprejme `result` (`PASS`, `FAIL` ali `NOT_CHECKED`) in neobvezno opombo; zahteva za napako sprejme `description` in `severity` (`MINOR` ali `MAJOR`). Pred zaključkom je oceno mogoče popraviti, tudi vrniti na `NOT_CHECKED`. Pot `/inspections/:id/complete` najprej preveri vse postavke, nato po [pravilih iz dokumenta 02](02-funkcionalnosti-in-obseg.md#pravila-ocenjevanja-in-zaključka) izračuna izid. V isti transakciji shrani `finalResult`, `completedAt` in stanje rezervacije `COMPLETED`. Neuspešna validacija vrne `409` brez spremembe stanja ali izida.
+
 API vrne jasna sporočila: neveljavni podatki (`400`), neprijavljen uporabnik (`401`), prepovedano dejanje (`403`), neobstoječ ali tuj zapis (`404`) ter zaseden termin ali nedovoljen prehod stanja (`409`).
 
 Nadgradnje F08–F12 bodo dodale poti za upravljanje osebja, urejanje prostih terminov in predloge, prestavitev rezervacije ter statistiko. Ustvarjanje računov osebja prek aplikacije bo pri F08 uporabljalo Supabase Auth Admin API samo na backendu; administratorski ključ ne sodi v frontend.
@@ -140,3 +142,16 @@ Ukazi in SQL datoteke so načrtovani; aplikacija v tej fazi še ni implementiran
 ## Preverjanje delovanja
 
 Ob implementaciji preverimo celoten potek za vse tri vloge: rezervacijo lastnega vozila, začetek pregleda, ocenjevanje, zapis napak in prikaz izida. Dodatno preverimo zavrnitev dostopa do tujih podatkov, dvojne rezervacije, nepopolnega zaključka ter spreminjanja zaključenega pregleda. Za izračun treh izidov pripravimo kratke avtomatske teste; sočasne rezervacije in zaključevanje preverimo z zahtevami proti API ter bazi.
+
+Primeri za preverjanje zaključka (neomenjene postavke imajo `PASS` in nimajo napak):
+
+| Postavke in napake pred zaključkom | Pričakovani rezultat zahteve za zaključek |
+| --- | --- |
+| Vse postavke `PASS`, brez napak. | `PASSED`; rezervacija `COMPLETED`. |
+| Ena ali več postavk `FAIL`, vsaka ima napake, vse napake so `MINOR`. | `REINSPECTION_REQUIRED`; rezervacija `COMPLETED`. |
+| Vse postavke ocenjene in skladne, vsaj ena napaka `MAJOR`, lahko tudi `MINOR`. | `FAILED`; rezervacija `COMPLETED`. |
+| Vsaj ena postavka `NOT_CHECKED`, tudi če je drugje že zapisana napaka `MAJOR`. | `409`; ostane `IN_PROGRESS`, izid `NULL`. |
+| Postavka `FAIL` brez napake. | `409`; ostane `IN_PROGRESS`, izid `NULL`. |
+| Postavka `PASS` z napako katerekoli resnosti. | `409`; ostane `IN_PROGRESS`, izid `NULL`. |
+
+Tabela opisuje pričakovano vedenje za kasnejšo implementacijo; trenutno preverjamo skladnost zasnove, ne delovanja že izdelane aplikacije.

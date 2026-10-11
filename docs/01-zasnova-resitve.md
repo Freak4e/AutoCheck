@@ -20,7 +20,7 @@ Projekt je učna simulacija. Ne predstavlja uradnega sistema za tehnične pregle
 2. Stranka se registrira, vnese svoje vozilo in zanj izbere prost termin. Rezervacija dobi stanje `BOOKED`; istega termina druga stranka ne more rezervirati.
 3. Preglednik ob prihodu vozila začne rezervirani pregled. Rezervacija preide v `IN_PROGRESS`, sistem pa ustvari pregled in vanj kopira predvidene postavke kontrolnega seznama.
 4. Preglednik oceni zavore, luči, pnevmatike, krmiljenje, vzmetenje, emisije in identifikacijo vozila. Ob neuspešni postavki zabeleži opis napake in resnost `MINOR` ali `MAJOR`.
-5. Ko so ocenjene vse postavke in so podatki skladni, preglednik potrdi zaključek. Sistem izračuna izid, shrani čas zaključka in rezervacijo označi kot `COMPLETED`.
+5. Ko so ocenjene vse postavke in so podatki skladni, preglednik potrdi zaključek. Sistem izračuna izid: brez napak `PASSED`, samo z napakami `MINOR` izid `REINSPECTION_REQUIRED`, ob vsaj eni napaki `MAJOR` pa `FAILED`. Shrani čas zaključka in rezervacijo v vseh treh primerih označi kot `COMPLETED`.
 6. Stranka v zgodovini svojega vozila vidi zaključen pregled, ocene postavk, napake in izid. Zaključenega pregleda ni več mogoče spreminjati.
 
 ## Meje prve različice

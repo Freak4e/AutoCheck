@@ -37,6 +37,15 @@ Načrt obsega **12 funkcionalnosti**, od tega **7 za MVP**. F03–F07 so domensk
 
 Stanje poteka hrani rezervacija (`Appointment.status`). Pregled (`Inspection`) hrani ugotovitve in končni izid, ki ni isto kot stanje rezervacije.
 
+| Pojem in polje | Dovoljene vrednosti | Pomen |
+| --- | --- | --- |
+| Stanje rezervacije: `Appointment.status` | `BOOKED`, `IN_PROGRESS`, `COMPLETED` | Ali je pregled rezerviran, v teku ali zaključen. |
+| Ocena postavke: `InspectionItem.result` | `NOT_CHECKED`, `PASS`, `FAIL` | Ali je posamezna postavka že preverjena in ali je uspešna. |
+| Resnost napake: `Defect.severity` | `MINOR`, `MAJOR` | Preglednik posamezno napako označi kot manjšo ali večjo. |
+| Izid pregleda: `Inspection.finalResult` | Pred zaključkom `NULL`; nato `PASSED`, `FAILED`, `REINSPECTION_REQUIRED` | Backend izračuna izid celotnega pregleda ob zaključku. |
+
+`Inspection` pomeni pregled, `INSPECTOR` pa uporabniško vlogo preglednika. `FAIL` je ocena ene postavke in še ne pomeni nujno izida `FAILED`: če ima postavka samo manjše napake in drugje ni večjih napak, je izid pregleda `REINSPECTION_REQUIRED`.
+
 ### Pravila rezervacije in začetka
 
 - Termin traja 30 minut, je v prihodnosti in se ne prekriva z drugim terminom. Ena rezervacija zasede cel termin.
@@ -49,16 +58,20 @@ Stanje poteka hrani rezervacija (`Appointment.status`). Pregled (`Inspection`) h
 
 - Začetna ocena vsake postavke je `NOT_CHECKED`.
 - Postavka `FAIL` mora ob zaključku imeti vsaj eno napako; postavka `PASS` ne sme imeti napak. Med izpolnjevanjem je začasno nepopoln zapis dovoljen.
-- Napaka ima neprazen opis in resnost `MINOR` ali `MAJOR`. Nanaša se na postavko istega pregleda.
+- Napaka ima neprazen opis in resnost `MINOR` ali `MAJOR`, ki jo izbere preglednik. Nanaša se na postavko istega pregleda. Tudi manjša napaka pomeni oceno postavke `FAIL`; `PASS` pomeni postavko brez ugotovljenih napak.
 - Zaključek je dovoljen samo izvajalcu aktivnega pregleda, ko ni več neocenjenih postavk in so vse napake skladne z ocenami.
 - Strežnik v isti transakciji izračuna in shrani izid, nastavi `completedAt` ter stanje rezervacije spremeni v `COMPLETED`. Odjemalec ne določa končnega izida.
 - Zaključenih pregledov, postavk in napak ni dovoljeno spreminjati ali brisati. Ponoven zahtevek za zaključek se zavrne brez spremembe podatkov.
+
+Izid se izračuna šele po uspešnem preverjanju popolnosti in skladnosti vseh postavk. Če ostane `NOT_CHECKED`, `FAIL` brez napake ali `PASS` z napako, se zaključek zavrne tudi ob že zabeleženi napaki `MAJOR`; pregled ostane v teku in `finalResult` ostane `NULL`.
 
 | Pogoj ob zaključku, preverjen po vrstnem redu | Končni izid |
 | --- | --- |
 | Obstaja vsaj ena napaka `MAJOR`. | `FAILED` |
 | Ni napake `MAJOR`, obstaja pa vsaj ena napaka `MINOR`. | `REINSPECTION_REQUIRED` |
 | Ni napak in vse postavke imajo `PASS`. | `PASSED` |
+
+Pri kombinaciji napak `MINOR` in `MAJOR` prevlada `MAJOR`, zato je izid `FAILED`. Število manjših napak samo po sebi ne spremeni njihove resnosti. Po uspešnem zaključku je rezervacija pri vseh treh izidih `COMPLETED`; to pomeni končan postopek, ne nujno uspešno opravljen pregled.
 
 To je izključno poenostavljeno pravilo učne aplikacije, ne razlaga uradnih meril tehničnih pregledov. Oznaka `REINSPECTION_REQUIRED` sama ne ustvari nove rezervacije. Stranka lahko po zaključku sama rezervira nov običajen pregled; povezovanje ponovnih pregledov ni del MVP.
 

@@ -70,6 +70,14 @@ Termin je prost, če nanj ni vezana rezervacija in se še ni začel. Ločenega p
 
 Vozilo je določeno prek rezervacije, zato `vehicleId` ni podvojen tudi na pregledu. `completedAt` in `finalResult` morata biti oba prazna ali oba izpolnjena; čas zaključka ne sme biti pred začetkom. Stanje poteka se bere iz rezervacije.
 
+| `Appointment.status` | Povezani `Inspection` | `completedAt` in `finalResult` |
+| --- | --- | --- |
+| `BOOKED` | Še ne obstaja. | Ni zapisa pregleda. |
+| `IN_PROGRESS` | Obstaja natanko en pregled z izvajalcem, časom začetka in postavkami. | Obe polji sta `NULL`. |
+| `COMPLETED` | Obstaja isti, zaključen pregled. | Obe polji sta izpolnjeni; izid je lahko katerikoli od treh dovoljenih izidov. |
+
+Te povezave med stanjem rezervacije in pregledom zagotovi backend v transakcijah začetka in zaključka. `Inspection` nima dodatnega polja `status`. Pravila za izračun `finalResult` so določena v [dokumentu 02](02-funkcionalnosti-in-obseg.md#pravila-ocenjevanja-in-zaključka).
+
 ### 6. ChecklistTemplateItem – postavka predloge (`checklist_template_items`)
 
 | Polje | Tip in omejitve | Namen |
@@ -104,9 +112,9 @@ Par `(inspectionId, templateItemId)` je enoličen. Kopije besedil ohranijo prvot
 | `id` | `uuid`, PK | Identifikator napake. |
 | `inspectionItemId` | `uuid`, FK → InspectionItem | Postavka, pri kateri je napaka ugotovljena. |
 | `description` | `text`, neprazno | Opis konkretne ugotovitve. |
-| `severity` | `varchar`, CHECK | `MINOR` ali `MAJOR`. |
+| `severity` | `varchar`, CHECK | `MINOR` (manjša) ali `MAJOR` (večja napaka); izbere preglednik. |
 
-Pregled se določi prek postavke; ločen `inspectionId` bi podvajal povezavo. Ena postavka ima lahko več napak.
+Pregled se določi prek postavke; ločen `inspectionId` bi podvajal povezavo. Ena postavka ima lahko več napak. Ob zaključku mora imeti postavka z napakami oceno `FAIL`, postavka `PASS` pa nobene napake. Backend pri izračunu končnega izida upošteva napake vseh postavk istega pregleda.
 
 ## Povezave in osnutek modela
 
