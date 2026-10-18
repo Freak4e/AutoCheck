@@ -1,0 +1,65 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1440' height='1200' viewBox='0 0 1440 1200' role='img'>
+<title>WF-04 – Zgodovina in rezultat</title><rect width='100%' height='100%' fill='white'/>
+<rect x='0' y='0' width='1440' height='80' fill='#eeeeee' stroke='#b5b5b5'/>
+<text x='28' y='51' font-family='Arial, sans-serif' font-size='28' font-weight='bold' fill='#222222'>AutoCheck</text>
+<text x='265' y='49' font-family='Arial, sans-serif' font-size='20' font-weight='normal' fill='#222222'>Stranka</text>
+<rect x='1250' y='18' width='150' height='44' fill='#ffffff' stroke='#555555'/>
+<text x='1264' y='47' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Odjava</text>
+<rect x='0' y='80' width='225' height='1065' fill='#f6f6f6' stroke='#b5b5b5'/>
+<text x='28' y='161' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Moja vozila</text>
+<text x='28' y='225' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Termini</text>
+<rect x='14' y='258' width='197' height='46' fill='#dedede' stroke='#dedede'/>
+<text x='28' y='289' font-family='Arial, sans-serif' font-size='18' font-weight='bold' fill='#222222'>Zgodovina</text>
+<text x='260' y='140' font-family='Arial, sans-serif' font-size='30' font-weight='bold' fill='#222222'>WF-04 – Zgodovina in rezultat</text>
+<text x='260' y='178' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#555555'>Zaključen pregled je prikazan samo za branje.</text>
+<text x='28' y='1181' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#555555'>WF-04 | Nizkopodroben wireframe | Izmišljeni primeri | Časovni pas: Europe/Ljubljana</text>
+<text x='260' y='228' font-family='Arial, sans-serif' font-size='18' font-weight='bold' fill='#222222'>Vozilo</text>
+<rect x='260' y='240' width='700' height='46' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='272' y='271' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>LJAC101 · Renault Clio · 2018     [izberi]</text>
+<rect x='260' y='315' width='1130' height='165' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='280' y='357' font-family='Arial, sans-serif' font-size='22' font-weight='bold' fill='#222222'>Zgodovina izbranega vozila</text>
+<rect x='280' y='380' width='1080' height='44' fill='#e8e8e8' stroke='#b5b5b5'/>
+<text x='292' y='409' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Datum zaključka</text>
+<text x='532' y='409' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Izid</text>
+<text x='922' y='409' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Dejanje</text>
+<rect x='280' y='424' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='292' y='458' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>22. 10. 2026</text>
+<text x='532' y='458' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>REINSPECTION_REQUIRED</text>
+<text x='922' y='458' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Odpri podrobnosti [izbrano]</text>
+<rect x='260' y='510' width='1130' height='600' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='280' y='556' font-family='Arial, sans-serif' font-size='24' font-weight='bold' fill='#222222'>COMPLETED · REINSPECTION_REQUIRED</text>
+<text x='280' y='594' font-family='Arial, sans-serif' font-size='19' font-weight='normal' fill='#222222'>Preglednik: Ana Novak · začetek 10.05 · zaključek 10.25</text>
+<rect x='280' y='625' width='1080' height='44' fill='#e8e8e8' stroke='#b5b5b5'/>
+<text x='292' y='654' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Postavka</text>
+<text x='622' y='654' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Ocena</text>
+<text x='872' y='654' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Napake</text>
+<rect x='280' y='669' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='292' y='703' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Zavore</text>
+<text x='622' y='703' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>PASS</text>
+<text x='872' y='703' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Brez napak</text>
+<rect x='280' y='723' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='292' y='757' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Luči</text>
+<text x='622' y='757' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>FAIL</text>
+<text x='872' y='757' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>MINOR · Poškodovan pokrov luči.</text>
+<rect x='280' y='777' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='292' y='811' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Pnevmatike</text>
+<text x='622' y='811' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>PASS</text>
+<text x='872' y='811' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Brez napak</text>
+<rect x='280' y='831' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='292' y='865' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Krmiljenje</text>
+<text x='622' y='865' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>PASS</text>
+<text x='872' y='865' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Brez napak</text>
+<rect x='280' y='885' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='292' y='919' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Vzmetenje</text>
+<text x='622' y='919' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>PASS</text>
+<text x='872' y='919' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Brez napak</text>
+<rect x='280' y='939' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='292' y='973' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Emisije</text>
+<text x='622' y='973' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>PASS</text>
+<text x='872' y='973' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Brez napak</text>
+<rect x='280' y='993' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='292' y='1027' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Identifikacija vozila</text>
+<text x='622' y='1027' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>PASS</text>
+<text x='872' y='1027' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Brez napak</text>
+<text x='280' y='1078' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Nov termin ni samodejno rezerviran. Naročanje je na strani Termini.</text>
+</svg>

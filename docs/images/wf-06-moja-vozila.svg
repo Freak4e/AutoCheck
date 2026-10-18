@@ -1,0 +1,59 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1440' height='1200' viewBox='0 0 1440 1200' role='img'>
+<title>WF-06 – Moja vozila</title><rect width='100%' height='100%' fill='white'/>
+<rect x='0' y='0' width='1440' height='80' fill='#eeeeee' stroke='#b5b5b5'/>
+<text x='28' y='51' font-family='Arial, sans-serif' font-size='28' font-weight='bold' fill='#222222'>AutoCheck</text>
+<text x='265' y='49' font-family='Arial, sans-serif' font-size='20' font-weight='normal' fill='#222222'>Stranka</text>
+<rect x='1250' y='18' width='150' height='44' fill='#ffffff' stroke='#555555'/>
+<text x='1264' y='47' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Odjava</text>
+<rect x='0' y='80' width='225' height='1065' fill='#f6f6f6' stroke='#b5b5b5'/>
+<rect x='14' y='130' width='197' height='46' fill='#dedede' stroke='#dedede'/>
+<text x='28' y='161' font-family='Arial, sans-serif' font-size='18' font-weight='bold' fill='#222222'>Moja vozila</text>
+<text x='28' y='225' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Termini</text>
+<text x='28' y='289' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Zgodovina</text>
+<text x='260' y='140' font-family='Arial, sans-serif' font-size='30' font-weight='bold' fill='#222222'>WF-06 – Moja vozila</text>
+<text x='260' y='178' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#555555'>Podatke vozila lahko popraviš samo pred prvo rezervacijo.</text>
+<text x='28' y='1181' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#555555'>WF-06 | Nizkopodroben wireframe | Izmišljeni primeri | Časovni pas: Europe/Ljubljana</text>
+<rect x='260' y='210' width='1130' height='260' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='285' y='253' font-family='Arial, sans-serif' font-size='23' font-weight='bold' fill='#222222'>Seznam vozil</text>
+<rect x='285' y='275' width='1080' height='44' fill='#e8e8e8' stroke='#b5b5b5'/>
+<text x='297' y='304' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Oznaka</text>
+<text x='507' y='304' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Vozilo</text>
+<text x='777' y='304' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Rezervacije</text>
+<text x='1027' y='304' font-family='Arial, sans-serif' font-size='17' font-weight='bold' fill='#222222'>Urejanje</text>
+<rect x='285' y='319' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='297' y='353' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>LJAC101</text>
+<text x='507' y='353' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Renault Clio · 2018</text>
+<text x='777' y='353' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Brez rezervacij</text>
+<text x='1027' y='353' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Uredi [izbrano]</text>
+<rect x='285' y='373' width='1080' height='54' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='297' y='407' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>LJAC202</text>
+<text x='507' y='407' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>VW Polo · 2020</text>
+<text x='777' y='407' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Ima rezervacijo</text>
+<text x='1027' y='407' font-family='Arial, sans-serif' font-size='17' font-weight='normal' fill='#222222'>Onemogočeno</text>
+<rect x='1100' y='220' width='265' height='44' fill='#ffffff' stroke='#555555'/>
+<text x='1114' y='249' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Dodaj vozilo</text>
+<rect x='260' y='505' width='1130' height='580' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='285' y='553' font-family='Arial, sans-serif' font-size='23' font-weight='bold' fill='#222222'>Podatki vozila · urejanje LJAC101</text>
+<text x='285' y='608' font-family='Arial, sans-serif' font-size='18' font-weight='bold' fill='#222222'>Registrska oznaka</text>
+<rect x='285' y='620' width='500' height='46' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='297' y='651' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>LJAC101</text>
+<text x='825' y='608' font-family='Arial, sans-serif' font-size='18' font-weight='bold' fill='#222222'>VIN</text>
+<rect x='825' y='620' width='540' height='46' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='837' y='651' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>VF1ABCDE123456789</text>
+<text x='285' y='718' font-family='Arial, sans-serif' font-size='18' font-weight='bold' fill='#222222'>Proizvajalec</text>
+<rect x='285' y='730' width='500' height='46' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='297' y='761' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Renault</text>
+<text x='825' y='718' font-family='Arial, sans-serif' font-size='18' font-weight='bold' fill='#222222'>Model</text>
+<rect x='825' y='730' width='540' height='46' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='837' y='761' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Clio</text>
+<text x='285' y='828' font-family='Arial, sans-serif' font-size='18' font-weight='bold' fill='#222222'>Letnik</text>
+<rect x='285' y='840' width='500' height='46' fill='#ffffff' stroke='#b5b5b5'/>
+<text x='297' y='871' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>2018</text>
+<rect x='825' y='810' width='540' height='76' fill='#f1f1f1' stroke='#b5b5b5'/>
+<text x='839' y='839' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>VIN: 17 znakov, brez I, O in Q.</text>
+<text x='839' y='866' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Obvezna so vsa polja.</text>
+<rect x='285' y='950' width='250' height='44' fill='#ffffff' stroke='#555555'/>
+<text x='299' y='979' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Shrani vozilo</text>
+<rect x='570' y='950' width='250' height='44' fill='#ffffff' stroke='#555555'/>
+<text x='584' y='979' font-family='Arial, sans-serif' font-size='18' font-weight='normal' fill='#222222'>Na termine</text>
+</svg>
