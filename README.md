@@ -71,18 +71,3 @@ Mapa `database/` in izvorna koda iz načrta arhitekture bosta nastali šele ob i
 4. Pregledamo PR in ga združimo po običajnem postopku. Nato lokalno posodobimo `main`. Spremembe v `main` vnašamo prek PR.
 
 Datotek `.env`, gesel in ključev ne vključujemo v commit. `.env.example` sme vsebovati le vzorčne vrednosti; lock datoteke sodijo v repozitorij.
-
-### Zaščita veje main
-
-Ciljne nastavitve so obvezen PR, **0 zahtevanih odobritev**, prepoved force push in brisanja ter veljavnost pravil tudi za administratorja. Obvezni CI testi, code-owner odobritve in odobritev zadnjega potiska niso zahtevani.
-
-**Stanje ob preverjanju 24. 10. 2026:** repozitorij je zaseben. GitHub API kljub administratorskemu dostopu vrne `403` z zahtevo po GitHub Pro oziroma javnem repozitoriju. Zaščite zato ni mogoče nastaviti ali potrditi kot aktivne; vidnost ostaja zasebna. GitHub Flow se do omogočene zaščite izvaja po dogovoru, brez strežniškega uveljavljanja teh pravil.
-
-Za dokončanje zaščite lastnik omogoči GitHub Pro za račun, ki je lastnik repozitorija, nato v [nastavitvah vej](https://github.com/Freak4e/AutoCheck/settings/branches) izbere **Add classic branch protection rule** za `main`:
-
-- Vključi **Require a pull request before merging**; **Require approvals** pusti izključeno (0 odobritev).
-- **Require review from Code Owners**, **Require approval of the most recent reviewable push** in **Require status checks to pass before merging** pusti izključeno.
-- Vključi **Do not allow bypassing the above settings**.
-- **Allow force pushes** in **Allow deletions** pusti izključeno ter shrani pravilo.
-
-Nato preveri shranjeno pravilo in da naslednji PR ne zahteva odobritve druge osebe. Omejitev paketov opisuje [uradna dokumentacija zaščitenih vej](https://docs.github.com/en/rest/branches/branch-protection).
