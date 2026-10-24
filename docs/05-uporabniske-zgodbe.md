@@ -12,7 +12,7 @@ Manjše odločitve za opis uporabniškega vmesnika:
 - Potrditev e-pošte sledi nastavitvi Supabase Auth iz dokumenta 04. Če je vključena, je del registracijskega poteka. Ne dodajamo lastnih omejitev dolžine gesla, ki niso določene v zasnovi.
 - Datumi v vmesniku so v časovnem pasu `Europe/Ljubljana`. Vzorčni podatki na wireframe-ih so izmišljeni in predstavljajo različne trenutke istega procesa.
 
-Vsako zgodbo je mogoče preveriti z vnaprej pripravljenimi računi in podatki, brez izvedbe vseh predhodnih zgodb prek vmesnika. Funkcionalne povezave ne zahtevajo ene velike skupne zgodbe. [Wireframe-i](05-wireframes.md) prikazujejo razporeditev vsebine; ne predstavljajo implementacije.
+Vsako zgodbo je mogoče preveriti z vnaprej pripravljenimi računi in podatki, brez izvedbe vseh predhodnih zgodb prek vmesnika. Funkcionalne povezave ne zahtevajo ene velike skupne zgodbe. [Wireframe-i](06-wireframes.md) prikazujejo razporeditev vsebine; ne predstavljajo implementacije.
 
 ## Pregled, ki preseže načrtovani termin
 
@@ -248,7 +248,7 @@ Primer za preverjanje (obe vozili sta prispeli, drugi preglednik ne začne dodat
 
 ## Sledljivost MVP
 
-Oznake WF se nanašajo na [opis in slike wireframov](05-wireframes.md). Zgodbe US-01–US-15 pokrijejo celoten MVP; dodatne funkcionalnosti niso uvedene.
+Oznake WF se nanašajo na [opis in slike wireframov](06-wireframes.md). Zgodbe US-01–US-15 pokrijejo celoten MVP; dodatne funkcionalnosti niso uvedene.
 
 | MVP funkcionalnost | Uporabniške zgodbe | Povezani wireframe-i |
 | --- | --- | --- |

@@ -25,9 +25,9 @@ WF-04 je na sliki prikazan za stranko. Preglednik lahko enako vsebino vidi samo 
 **Uporabniška vloga:** Stranka.  
 **Povezane zgodbe:** US-06, US-07; navigacija do US-03 in odjava US-02.
 
-![WF-01 – Rezervacija termina](images/wf-01-rezervacija-termina.png)
+![WF-01 – Rezervacija termina](wireframes/wf-01-rezervacija-termina.png)
 
-[Izvorna SVG datoteka](images/wf-01-rezervacija-termina.svg)
+[Izvorna SVG datoteka](wireframes/wf-01-rezervacija-termina.svg)
 
 Zgornji del vsebuje izbiro lastnega vozila, seznam prostih prihodnjih terminov ter povzetek izbire. Spodnji del prikazuje obstoječe odprte rezervacije lastnih vozil. V prikazanem primeru je za LJAC101 izbran nov termin, LJAC202 pa že ima rezervacijo.
 
@@ -42,9 +42,9 @@ Zgornji del vsebuje izbiro lastnega vozila, seznam prostih prihodnjih terminov t
 **Uporabniška vloga:** Preglednik.  
 **Povezane zgodbe:** US-08, US-09; odjava US-02.
 
-![WF-02 – Razpored pregledov](images/wf-02-razpored-pregledov.png)
+![WF-02 – Razpored pregledov](wireframes/wf-02-razpored-pregledov.png)
 
-[Izvorna SVG datoteka](images/wf-02-razpored-pregledov.svg)
+[Izvorna SVG datoteka](wireframes/wf-02-razpored-pregledov.svg)
 
 Zaslon prikazuje razpored celotne postaje in podatke izbranega naročenega vozila. Na sliki je ob 10.05 pregledno mesto prosto, rezervacija ob 10.00 pa še `BOOKED`, zato je njen prevzem dovoljen. Predhodni zaključen pregled pripada prijavljenemu pregledniku.
 
@@ -58,9 +58,9 @@ Zaslon prikazuje razpored celotne postaje in podatke izbranega naročenega vozil
 **Uporabniška vloga:** Preglednik.  
 **Povezane zgodbe:** US-08, US-09, US-12.
 
-![WF-02b – Razpored ob zamudi](images/wf-02b-razpored-ob-zamudi.png)
+![WF-02b – Razpored ob zamudi](wireframes/wf-02b-razpored-ob-zamudi.png)
 
-[Izvorna SVG datoteka](images/wf-02b-razpored-ob-zamudi.svg)
+[Izvorna SVG datoteka](wireframes/wf-02b-razpored-ob-zamudi.svg)
 
 To je alternativni primer daljšega pregleda, ne nadaljevanje zaključenega primera na WF-04. Ob 10.40 pregled LJAC101 z načrtovanim terminom 10.00–10.30 in dejanskim začetkom ob 10.05 še traja. Naslednje vozilo LJAC202 za termin 10.30–11.00 ostaja `BOOKED`.
 
@@ -76,9 +76,9 @@ Podrobna pravila in časovni primer so v razdelku [Pregled, ki preseže načrtov
 **Uporabniška vloga:** Preglednik, ki je prevzel pregled.  
 **Povezane zgodbe:** US-09, US-10, US-11, US-12; odjava US-02.
 
-![WF-03 – Izvedba pregleda](images/wf-03-izvedba-pregleda.png)
+![WF-03 – Izvedba pregleda](wireframes/wf-03-izvedba-pregleda.png)
 
-[Izvorna SVG datoteka](images/wf-03-izvedba-pregleda.svg)
+[Izvorna SVG datoteka](wireframes/wf-03-izvedba-pregleda.svg)
 
 Levo so kopirane postavke kontrolnega seznama, desno ocena, opomba in obrazec napake izbrane postavke. Spodaj sta splošna opomba in zaključek. Prikazan je shranjen primer s šestimi ocenjenimi postavkami: luči imajo `FAIL` in eno napako `MINOR`, emisije pa še `NOT_CHECKED`.
 
@@ -95,9 +95,9 @@ Levo so kopirane postavke kontrolnega seznama, desno ocena, opomba in obrazec na
 **Uporabniška vloga:** Stranka; bralni prikaz rezultata se uporabi tudi za dovoljene preglede osebja.  
 **Povezane zgodbe:** US-13, US-14; bralni dostop US-08 in US-15, rezultat zaključka US-12 ter odjava US-02.
 
-![WF-04 – Zgodovina in rezultat](images/wf-04-zgodovina-in-rezultat.png)
+![WF-04 – Zgodovina in rezultat](wireframes/wf-04-zgodovina-in-rezultat.png)
 
-[Izvorna SVG datoteka](images/wf-04-zgodovina-in-rezultat.svg)
+[Izvorna SVG datoteka](wireframes/wf-04-zgodovina-in-rezultat.svg)
 
 Stranka izbere svoje vozilo, v seznamu njegov zaključen pregled in pod njim vidi shranjene ugotovitve. Primer nadaljuje WF-03 po uspešnem preverjanju emisij: postavka luči ostane `FAIL` z napako `MINOR`, zato je pregled `REINSPECTION_REQUIRED`, stanje rezervacije pa `COMPLETED`.
 
@@ -111,9 +111,9 @@ Stranka izbere svoje vozilo, v seznamu njegov zaključen pregled in pod njim vid
 **Uporabniška vloga:** Obiskovalec oziroma odjavljen uporabnik.  
 **Povezane zgodbe:** US-01, US-02.
 
-![WF-05 – Prijava in registracija](images/wf-05-prijava-in-registracija.png)
+![WF-05 – Prijava in registracija](wireframes/wf-05-prijava-in-registracija.png)
 
-[Izvorna SVG datoteka](images/wf-05-prijava-in-registracija.svg)
+[Izvorna SVG datoteka](wireframes/wf-05-prijava-in-registracija.svg)
 
 Levi obrazec omogoča prijavo obstoječega računa, desni ustvarjanje računa stranke. Prikazana obvestila predstavljajo mesta za povratno informacijo; sporočilo o napačni prijavi se pokaže samo po neuspelem poskusu.
 
@@ -126,9 +126,9 @@ Levi obrazec omogoča prijavo obstoječega računa, desni ustvarjanje računa st
 **Uporabniška vloga:** Stranka.  
 **Povezane zgodbe:** US-03, US-04; odjava US-02.
 
-![WF-06 – Moja vozila](images/wf-06-moja-vozila.png)
+![WF-06 – Moja vozila](wireframes/wf-06-moja-vozila.png)
 
-[Izvorna SVG datoteka](images/wf-06-moja-vozila.svg)
+[Izvorna SVG datoteka](wireframes/wf-06-moja-vozila.svg)
 
 Seznam lastnih vozil je nad obrazcem za vnos oziroma popravek. Na sliki LJAC101 še nima rezervacije in je odprt za urejanje, LJAC202 pa jo že ima, zato ga ni mogoče spreminjati.
 
@@ -142,9 +142,9 @@ Seznam lastnih vozil je nad obrazcem za vnos oziroma popravek. Na sliki LJAC101 
 **Uporabniška vloga:** Administrator.  
 **Povezane zgodbe:** US-05; odjava US-02.
 
-![WF-07 – Objava terminov](images/wf-07-objava-terminov.png)
+![WF-07 – Objava terminov](wireframes/wf-07-objava-terminov.png)
 
-[Izvorna SVG datoteka](images/wf-07-objava-terminov.svg)
+[Izvorna SVG datoteka](wireframes/wf-07-objava-terminov.svg)
 
 Zgornji obrazec določa datum in začetek; konec se samodejno izračuna kot začetek + 30 minut in je samo za branje. Spodnji seznam kaže objavljene termine in zasedenost. Primer prikazuje še neobjavljen termin 11.00–11.30 med obstoječima terminoma.
 
@@ -157,9 +157,9 @@ Zgornji obrazec določa datum in začetek; konec se samodejno izračuna kot zač
 **Uporabniška vloga:** Administrator.  
 **Povezane zgodbe:** US-15; povezava do US-05 in odjava US-02.
 
-![WF-08 – Administratorske evidence](images/wf-08-administratorske-evidence.png)
+![WF-08 – Administratorske evidence](wireframes/wf-08-administratorske-evidence.png)
 
-[Izvorna SVG datoteka](images/wf-08-administratorske-evidence.svg)
+[Izvorna SVG datoteka](wireframes/wf-08-administratorske-evidence.svg)
 
 Zaslon združuje bralne sezname vseh vozil, rezervacij in pregledov postaje. Ne vsebuje statistike. Primer pokaže vozila različnih strank, zaključen pregled LJAC101 in še nezačeto rezervacijo LJAC202.
 
@@ -177,4 +177,4 @@ Izvor je [generate-wireframes.ps1](tools/generate-wireframes.ps1). V okolju Wind
 powershell -NoProfile -ExecutionPolicy Bypass -File .\docs\tools\generate-wireframes.ps1
 ```
 
-Skripta ustvari samo datoteke `wf-*.png` in `wf-*.svg` v `docs/images/`; ne spreminja aplikacije, dokumentacije 1. naloge ali obstoječega diagrama procesa. Pri izrisu preveri širino besedila in meje platna. Ročne spremembe SVG je treba prenesti tudi v skripto, če želimo ohraniti enak PNG ob ponovni izdelavi.
+Skripta ustvari samo datoteke `wf-*.png` in `wf-*.svg` v `docs/wireframes/`; ne spreminja aplikacije, dokumentacije 1. naloge ali obstoječega diagrama procesa. Pri izrisu preveri širino besedila in meje platna. Ročne spremembe SVG je treba prenesti tudi v skripto, če želimo ohraniti enak PNG ob ponovni izdelavi.

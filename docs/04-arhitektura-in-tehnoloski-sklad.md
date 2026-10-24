@@ -80,7 +80,7 @@ V projektu Supabase enkrat izvedemo datoteko `database/schema.sql` prek **SQL Ed
 
 ```text
 AutoCheck/
-├── docs/                    # štirje dokumenti zasnove
+├── docs/                    # šest dokumentov, wireframe-i in ADR-ji
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/
@@ -105,7 +105,7 @@ AutoCheck/
 └── README.md
 ```
 
-To je predlog za kasnejšo implementacijo. Trenutno so ustvarjeni samo dokumenti v `docs/`.
+To je predlog za kasnejšo implementacijo. Trenutna struktura vsebuje dokumentacijo, README, `.gitignore` ter prazni mapi `frontend/` in `backend/` z `.gitkeep`; izvorne kode in mape `database/` še ni. Dejanska struktura je prikazana v [README](../README.md#struktura-repozitorija), razlogi za sprejete izbire pa v [ADR-jih](adr/README.md).
 
 ## Lokalni zagon
 

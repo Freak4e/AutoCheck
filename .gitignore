@@ -1,0 +1,38 @@
+# Odvisnosti Node.js in npm
+node_modules/
+.npm/
+
+# Rezultati gradnje TypeScript/Vite in predpomnilniki
+dist/
+build/
+.vite/
+.cache/
+*.tsbuildinfo
+coverage/
+
+# Dnevniki
+*.log
+logs/
+
+# Lokalne nastavitve in skrivnosti (vzorci ostanejo sledljivi)
+.env
+.env.*
+!.env.example
+*.local
+.npmrc
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Urejevalniki in operacijski sistem
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Dokumentacije, slik in package-lock.json ne izključujemo.
