@@ -1,4 +1,4 @@
-﻿param([string]$OutputDirectory = (Join-Path $PSScriptRoot '..\images'))
+﻿param([string]$OutputDirectory = (Join-Path $PSScriptRoot '..\wireframes'))
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 $null = New-Item -ItemType Directory -Path $OutputDirectory -Force
