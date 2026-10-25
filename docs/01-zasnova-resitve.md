@@ -36,3 +36,6 @@ Zasnova in vsi ukazi v dokumentaciji opisujejo **načrtovano implementacijo**. V
 - [Funkcionalnosti, vloge in obseg](02-funkcionalnosti-in-obseg.md)
 - [Podatkovni model in pravila podatkov](03-podatkovni-model.md)
 - [Arhitektura, tehnologije, API in lokalni zagon](04-arhitektura-in-tehnoloski-sklad.md)
+- [Uporabniške zgodbe in kriteriji sprejema](05-uporabniske-zgodbe.md)
+- [Wireframe-i in povezave med zasloni](06-wireframes.md)
+- [Arhitekturne odločitve in njihove utemeljitve](adr/README.md)
