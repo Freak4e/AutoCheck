@@ -20,7 +20,7 @@ Frontend za prijavo uporablja Supabase Auth, poslovne podatke pa pridobi prek `/
 
 ### Posledice
 
-- Pozitivno: rezervacije, izračun izida in dostop imajo eno mesto uveljavljanja pravil, kar daje **predvidljiv vzdrževalni odtis** za majhen MVP.
+- Pozitivno: rezervacije, izračun izida in dostop imajo eno mesto uveljavljanja pravil.
 - Pozitivno: odjemalec ne določa končnega izida ali poljubnih prehodov stanj; enak REST API podpira vse tri vloge.
 - Negativno: backend je dodaten proces, ki ga je treba razviti, zagnati in vzdrževati; Supabase poslovnih pravil ne izdela namesto nas.
 - Negativno: ob izključenem Data API je pravilnost strežniške avtorizacije ključna; vsako pot in dostop do tujih zapisov bo treba preveriti.
