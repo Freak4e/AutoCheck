@@ -3,6 +3,8 @@ import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { AuthForm } from './AuthForm';
 import { api, ApiError, type Profile, type Role } from './api';
 import { supabase } from './supabase';
+import { CustomerDashboard } from './CustomerDashboard';
+import { AdminDashboard } from './AdminDashboard';
 
 const areas: Record<Role, { api: string; path: string; title: string; label: string; next: string }> = {
   CUSTOMER: { api: 'customer', path: '/vozila', title: 'Moja vozila', label: 'Stranka', next: 'Vnos in seznam vaših vozil sta naslednji korak razvoja.' },
@@ -101,7 +103,7 @@ function SignedApp({ client }: { client: SupabaseClient }) {
     </section> : !profile ? <p role="status">Nalaganje profila …</p> : <>
       <h1>{areas[profile.role].title}</h1>
       <p className="welcome">Pozdravljeni, <strong>{profile.name}</strong>. <span className="badge">{areas[profile.role].label}</span></p>
-      <section className="panel placeholder"><span className="step-number" aria-hidden="true">01</span><div><p className="eyebrow">PRVI KORAK JE PRIPRAVLJEN</p><h2>Vaš dostop je urejen.</h2><p>{areas[profile.role].next}</p><p className="muted">Ta del aplikacije še ni implementiran.</p></div></section>
+      {profile.role === 'CUSTOMER' ? <CustomerDashboard token={session.access_token} /> : profile.role === 'ADMIN' ? <AdminDashboard token={session.access_token} /> : <section className="panel placeholder"><span className="step-number" aria-hidden="true">01</span><div><p className="eyebrow">DOSTOP JE PRIPRAVLJEN</p><h2>Razpored sledi v naslednjem koraku.</h2><p>{areas[profile.role].next}</p><p className="muted">Ta del aplikacije še ni implementiran.</p></div></section>}
     </>}
   </main>;
 }
@@ -110,7 +112,7 @@ function Intro() {
   return <section className="intro"><p className="eyebrow">TEHNIČNI PREGLEDI · ENA POSTAJA</p>
     <h1>Prvi korak do<br /><em>urejenega pregleda.</em></h1>
     <p>Ustvarite račun in dostopajte do svojega prostora v aplikaciji AutoCheck.</p>
-    <div className="intro-note"><span className="status-dot" /><span>Razvoj MVP · prijava in uporabniške vloge</span></div>
+    <div className="intro-note"><span className="status-dot" /><span>Vaša vozila in rezervacije na enem mestu</span></div>
     <div className="road" aria-hidden="true"><div className="road-line" /><span className="road-marker">A</span><span className="road-end">✓</span></div>
   </section>;
 }

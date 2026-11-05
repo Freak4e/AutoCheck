@@ -3,7 +3,7 @@
 :root { font-family: 'DM Sans', system-ui, sans-serif; color: #24342c; background: #f8f9f5; font-synthesis: none; text-rendering: optimizeLegibility; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 button, a, input { -webkit-tap-highlight-color: transparent; }
 button { cursor: pointer; transition: background .15s; }
 button:disabled { cursor: wait; opacity: .65; }
@@ -33,7 +33,7 @@ h1, h2 { font-family: 'Manrope', system-ui, sans-serif; letter-spacing: -1.3px; 
 .auth-card form { margin-top: 28px; }
 .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
 label { font-size: 13px; font-weight: 600; }
-input { width: 100%; height: 46px; padding: 10px 13px; border: 1px solid #d6dfd2; border-radius: 7px; color: #20352a; background: #fcfdfb; }
+input, select { width: 100%; height: 46px; padding: 10px 13px; border: 1px solid #d6dfd2; border-radius: 7px; color: #20352a; background: #fcfdfb; }
 input[aria-invalid=true] { border-color: #b74736; }
 .field-error { font-size: 12px; color: #9a3225; }
 .primary { background: #214b32; color: white; border: 0; border-radius: 7px; padding: 14px 20px; font-weight: 600; }
@@ -55,6 +55,20 @@ input[aria-invalid=true] { border-color: #b74736; }
 .placeholder h2 { margin-top: 8px; }
 .step-number { font-size: 35px; padding: 25px; color: #76964b; background: #f1f5e9; border-radius: 14px; }
 .loading { min-height: 65vh; padding: 100px; text-align: center; }
+.dashboard { margin-top: 35px; }
+.section-heading, .actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.actions { justify-content: flex-start; flex-wrap: wrap; }
+.section-heading { margin: 24px 0 18px; }
+.form-grid, .vehicle-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.vehicle-grid { margin-bottom: 25px; }
+.registration { display: inline-block; border: 1px solid #b7c7ae; border-left: 6px solid #426d89; border-radius: 4px; padding: 3px 12px; font-size: 18px; font-weight: 700; letter-spacing: 1px; margin: 0; }
+.vehicle-card h3 { margin-bottom: 8px; }
+.vin { overflow-wrap: anywhere; font-size: 12px; }
+.locked { font-size: 13px; color: #756b47; background: #f7f3e6; padding: 9px 12px; border-radius: 6px; }
+.editor { margin-bottom: 25px; }
+.booking-panel { margin-top: 30px; }
+.slot-list { list-style: none; padding: 0; display: grid; gap: 10px; }
+.slot-list li { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 16px 22px; }
 footer { max-width: 1176px; margin: 0 auto; padding: 26px 0; border-top: 1px solid #dfe5db; display: flex; justify-content: space-between; color: #687465; font-size: 12px; }
 @media (max-width: 800px) {
   .site-header { height: 80px; padding: 0 24px; }
@@ -71,4 +85,6 @@ footer { max-width: 1176px; margin: 0 auto; padding: 26px 0; border-top: 1px sol
   .placeholder { align-items: flex-start; }
   .step-number { display: none; }
   .panel { padding: 23px; }
+  .form-grid, .vehicle-grid { grid-template-columns: 1fr; gap: 10px; }
+  .section-heading { align-items: flex-start; flex-direction: column; }
 }

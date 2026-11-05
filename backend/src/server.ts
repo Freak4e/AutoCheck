@@ -12,6 +12,7 @@ try {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
   const app = createApp({
+    pool,
     profiles: profileStore(pool),
     verifyToken: async token => {
       const { data, error } = await supabase.auth.getUser(token);
