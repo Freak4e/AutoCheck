@@ -1,56 +1,131 @@
-# AutoCheck
+﻿# AutoCheck
 
-AutoCheck je študijska spletna aplikacija za naročanje in evidentiranje tehničnih pregledov vozil na eni manjši postaji. Rezervacije, podatke vozil, ugotovitve preglednika in zgodovino združuje na enem mestu namesto v ločenih koledarjih, preglednicah in papirnih zapisnikih.
+Študijska aplikacija za naročanje in evidentiranje tehničnih pregledov na eni manjši postaji. Frontend uporablja **React + TypeScript + Vite**, backend **Node.js + Express + TypeScript**, prijavo in PostgreSQL pa zagotavlja **Supabase**.
 
-Projekt je **v fazi načrtovanja**. Repozitorij vsebuje dokumentacijo prvih dveh nalog, wireframe-e in zapise arhitekturnih odločitev. Aplikacija še ni implementirana; `frontend/` in `backend/` vsebujeta samo `.gitkeep`.
+## Trenutni obseg
 
-## Vloge in obseg MVP
+Prvi razvojni korak je **F01 – dostop glede na vlogo (US-01, US-02)**: registracija stranke, prijava, odjava, priprava profila in strežniško preverjanje vloge. Začetne strani posameznih vlog so ogrodja za nadaljnji razvoj. Vozila, termini, rezervacije in pregledi (F02–F07) še niso implementirani.
 
-- **Stranka:** registracija in prijava, vnos lastnih vozil, rezervacija prostega termina ter pregled lastnih rezultatov in zgodovine.
-- **Preglednik:** razpored postaje, prevzem rezervacije, ocenjevanje kontrolnega seznama, beleženje napak in zaključek pregleda.
-- **Administrator:** objava prostih terminov in bralni vpogled v evidence postaje.
+Razčlenitev nalog, povezave na GitHub in načrt nadaljevanja so v [načrtu MVP](docs/07-nacrt-mvp.md). Dve nalogi za vnos vozil sta namenjeni naslednjemu razvojnemu dnevu; status `Doing` pomeni načrtovano nadaljevanje, ne že izdelane funkcije.
 
-MVP obsega funkcionalnosti F01–F07: eno postajo, eno pregledno mesto, 30-minutne termine in sedem postavk kontrolnega seznama. Potek rezervacije je `BOOKED → IN_PROGRESS → COMPLETED`; izid pregleda izračuna backend. Upravljanje osebja in predloge, urejanje terminov, prestavitev rezervacije in statistika (F08–F12) so poznejše nadgradnje.
+## Predpogoji
 
-Gre za učno simulacijo brez povezave z uradnimi evidencami ali merilnimi napravami. Izid `PASSED` ne pomeni uradne registracije vozila.
+- Node.js **24 LTS** z npm (`node --version`, `npm --version`).
+- Git in internetna povezava.
+- Lasten projekt Supabase z dostopom do SQL Editorja, nastavitev Auth in povezave PostgreSQL.
 
-## Izbrane tehnologije
+Docker in lokalna baza nista potrebna. Podatki in računi ostanejo na Supabase tudi po ustavitvi aplikacije. Ukaze izvajaj iz korena repozitorija. **Če PowerShell blokira `npm.ps1`, namesto `npm` uporabi `npm.cmd`**; spreminjanje execution policy ni potrebno.
 
-| Del | Dogovorjena izbira |
-| --- | --- |
-| Uporabniški vmesnik | React, TypeScript, Vite in navaden CSS |
-| Lastni REST API | Node.js, Express in TypeScript |
-| Podatki | PostgreSQL na Supabase; parametrizirani SQL in transakcije prek `pg` na backendu |
-| Prijava | Supabase Auth in `@supabase/supabase-js` |
-| Priprava baze | Shranjene SQL datoteke in Supabase SQL Editor |
-| Razvoj | Node.js, npm, Git in lokalne datoteke `.env` |
+## 1. Priprava Supabase
 
-Frontend in backend bosta tekla lokalno, baza in prijava na Supabase; razvoj zahteva internetno povezavo. Poslovni podatki bodo dostopni prek Express API, Supabase Data API bo izključen. Zasnova ne uporablja Dockerja, ORM ali mikrostoritev. Različice odvisnosti bodo ob implementaciji zapisane v `package-lock.json`.
+1. Ustvari oziroma odpri projekt Supabase.
+2. V **SQL Editorju** enkrat izvedi [database/schema.sql](database/schema.sql). Trenutno ustvari samo tabelo `profiles` za F01; ostale tabele bomo dodajali z naslednjimi funkcionalnostmi. Skripte ne izvajaj ponovno čez obstoječo shemo. Poznejše spremembe bodo v `database/changes/`.
+3. V nastavitvah **Data API** izključi Data API. Poslovni podatki potujejo prek Express API. Auth ostane omogočen. Profili dodatno uporabljajo RLS brez pravil za neposreden dostop.
+4. V **Authentication → Sign In / Providers** omogoči e-pošto in geslo. Nastavitev **Confirm email** določa, ali mora uporabnik pred prijavo potrditi e-pošto. Aplikacija upošteva oba načina.
+5. V **Authentication → URL Configuration** nastavi **Site URL** na `http://localhost:5173` in isti naslov dodaj med dovoljene preusmeritve.
+6. Poišči URL projekta in **publishable key** (`sb_publishable_...`; ustrezen je tudi starejši javni ključ `anon`). V frontend nikoli ne vpisuj skrivnega ključa oziroma `service_role`.
+7. V **Connect → Session pooler** kopiraj povezavo PostgreSQL (vrata 5432). Geslo v URI URL-kodiraj, če vsebuje npr. `@`, `#`, `:` ali `/`. Ne dodajaj parametrov `sslmode`, `sslcert`, `sslkey` ali `sslrootcert`: TLS nastavi backend in preveri certifikat. Če potrebuješ Supabase CA certifikat, ga prenesi iz nastavitev baze in nastavi `DATABASE_CA_CERT_PATH`.
+
+## 2. Lokalne nastavitve
+
+V PowerShellu kopiraj vzorca samo ob prvi pripravi; ne prepisuj že izpolnjenih datotek:
+
+```powershell
+Copy-Item frontend/.env.example frontend/.env
+Copy-Item backend/.env.example backend/.env
+```
+
+V `frontend/.env` izpolni:
+
+```dotenv
+VITE_SUPABASE_URL=https://PROJECT_REF.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+```
+
+V `backend/.env` izpolni:
+
+```dotenv
+SUPABASE_URL=https://PROJECT_REF.supabase.co
+SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+DATABASE_URL=postgresql://postgres.PROJECT_REF:URL_ENCODED_PASSWORD@SESSION_POOLER_HOST:5432/postgres
+PORT=3000
+# Neobvezno: pot relativno glede na backend/.
+# DATABASE_CA_CERT_PATH=./certs/prod-supabase.cer
+```
+
+Oba dela morata kazati na isti projekt. `.env` in certifikati ne sodijo v Git. Po spremembi nastavitev ponovno zaženi oba strežnika.
+
+## 3. Namestitev in zagon
+
+Namestitev točnih različic iz lock datotek:
+
+```powershell
+npm --prefix frontend ci
+npm --prefix backend ci
+```
+
+Prvi terminal – backend:
+
+```powershell
+npm --prefix backend run dev
+```
+
+Drugi terminal – frontend:
+
+```powershell
+npm --prefix frontend run dev
+```
+
+Odpri **http://localhost:5173**. Backend posluša na **http://localhost:3000**; Vite mu posreduje zahteve `/api`. `GET /api/health` preveri proces, ne povezave z bazo ali Auth. Za preverjanje obeh storitev se prijavi in preveri prikaz imena ter vloge.
+
+Procesa ustaviš s `Ctrl+C`. Port 5173 je fiksen zaradi potrditvene e-pošte. Če spremeniš backend `PORT`, prilagodi tudi cilj proxyja v `frontend/vite.config.ts`.
+
+## 4. Računi in vloge
+
+- Registracija vedno ustvari **stranko (`CUSTOMER`)**. Vloga ni polje obrazca. Profil nastane šele po preverjeni prijavi prek `POST /api/auth/profile`.
+- Ob vključeni potrditvi e-pošte odpri prejeto povezavo. Pri ponovni registraciji iste e-pošte sledi navodilu za prijavo; Supabase lahko zaradi varovanja podatkov vrne enak odgovor kot pri novi registraciji.
+- Za preglednika in administratorja ustvari računa v **Authentication → Users**, nato v SQL Editorju pripravi profila z dejanskima UUID-jema:
+
+```sql
+INSERT INTO public.profiles (id, name, role)
+VALUES
+  ('UUID_PREGLEDNIKA', 'Preglednik', 'INSPECTOR'),
+  ('UUID_ADMINISTRATORJA', 'Administrator', 'ADMIN');
+```
+
+Če profila že obstajata, uporabi ciljan `UPDATE public.profiles SET role = 'INSPECTOR' WHERE id = 'DEJANSKI_UUID';` oziroma `ADMIN`. To je ročna priprava osebja. Aplikacija ob ponovni prijavi obstoječega imena ali vloge ne prepiše.
+
+Stranka po prijavi vidi »Moja vozila«, preglednik »Razpored pregledov«, administrator pa »Evidence postaje«. Za zdaj strani pojasnjujejo, da pripadajoča funkcionalnost še čaka na razvoj; ne prikazujejo izmišljenih evidenc.
+
+## Preverjanje in gradnja
+
+```powershell
+npm --prefix backend test
+npm --prefix frontend test
+npm --prefix backend run build
+npm --prefix frontend run build
+```
+
+Avtomatski testi ne potrebujejo pravih ključev. Auth je v testih nadzorovan, SQL profilov pa preverjamo v začasnem PostgreSQL okolju PGlite. To ne nadomesti preizkusa na lastnem Supabase projektu. Kriteriji US-01/US-02 in ročni preizkus so v [preverjanju F01](docs/08-preverjanje-f01.md).
+
+Preveden backend: `npm --prefix backend start`. Predogled prevedenega frontenda: `npm --prefix frontend run preview -- --port 5173`; backend mora teči. To ni navodilo za produkcijsko gostovanje.
+
+### Pogoste težave
+
+- **Manjkajo nastavitve:** izpolni obe `.env`; frontend pokaže navodilo, backend se ustavi z imeni manjkajočih spremenljivk.
+- **Prijava ni potrjena:** preveri e-pošto in URL v Supabase. Geslo mora ustrezati pravilom tvojega projekta Supabase.
+- **Profil se ne naloži:** preveri backend, izvedbo SQL sheme, geslo baze in povezavo Session pooler.
+- **Napaka certifikata:** nastavi pravi CA certifikat; ne izklapljaj preverjanja TLS.
+- **Zasedena vrata:** ustavi stari proces; frontend ne preklopi samodejno na drug port.
 
 ## Struktura repozitorija
 
 ```text
-AutoCheck/
-├── README.md
-├── .gitignore
-├── frontend/
-│   └── .gitkeep
-├── backend/
-│   └── .gitkeep
-└── docs/
-    ├── 01-zasnova-resitve.md
-    ├── 02-funkcionalnosti-in-obseg.md
-    ├── 03-podatkovni-model.md
-    ├── 04-arhitektura-in-tehnoloski-sklad.md
-    ├── 05-uporabniske-zgodbe.md
-    ├── 06-wireframes.md
-    ├── wireframes/          # vseh 9 prikazov v PNG in SVG
-    ├── images/              # obstoječi diagram poteka pregleda
-    ├── tools/               # obstoječa skripta za izdelavo wireframe-ov
-    └── adr/                 # kazalo, minimalna predloga MADR in 6 ADR-jev
+frontend/       React vmesnik, seja Supabase, obrazci, testi
+backend/        Express API, preverjanje prijave in vlog, SQL profili, testi
+database/       začetna SQL shema za trenutno implementirani obseg
+docs/           zasnova, uporabniške zgodbe, wireframe-i, načrt in preverjanje
 ```
-
-Mapa `database/` in izvorna koda iz načrta arhitekture bosta nastali šele ob implementaciji.
 
 ## Dokumentacija
 
@@ -58,16 +133,20 @@ Mapa `database/` in izvorna koda iz načrta arhitekture bosta nastali šele ob i
 2. [Funkcionalnosti in obseg](docs/02-funkcionalnosti-in-obseg.md)
 3. [Podatkovni model](docs/03-podatkovni-model.md)
 4. [Arhitektura in tehnološki sklad](docs/04-arhitektura-in-tehnoloski-sklad.md)
-5. [Uporabniške zgodbe](docs/05-uporabniske-zgodbe.md)
+5. [Uporabniške zgodbe in kriteriji sprejema](docs/05-uporabniske-zgodbe.md)
 6. [Wireframe-i](docs/06-wireframes.md)
+7. [Načrt MVP in GitHub naloge](docs/07-nacrt-mvp.md)
+8. [Preverjanje F01](docs/08-preverjanje-f01.md)
 
-[Arhitekturne odločitve (ADR)](docs/adr/) pojasnjujejo razloge za že izbrano zasnovo. Ob spremembi sprejete odločitve ustvarimo nov ADR, ki navede, katerega nadomešča; starega ohranimo in označimo kot nadomeščenega s povezavo na novega.
+[ADR-ji](docs/adr/) pojasnjujejo arhitekturne odločitve. Dokumenti prvih dveh nalog opisujejo celoten načrtovani MVP; zgornji trenutni obseg pove, kaj je že implementirano.
 
 ## Razvojni postopek: GitHub Flow
 
-1. Iz posodobljene `main` ustvarimo kratkotrajno vejo, npr. `chore/priprava-repozitorija-adr` ali `feat/rezervacija-termina`.
-2. Spremembe izvedemo na veji, pregledamo diff in opravimo preverjanja, primerna spremembi. Dokumentaciji preverimo povezave in skladnost; ob implementaciji tudi delovanje.
-3. Shranimo smiseln commit, vejo potisnemo na GitHub in odpremo pull request (PR) v `main` z opisom sprememb in preverjanj.
-4. Pregledamo PR in ga združimo po običajnem postopku. Nato lokalno posodobimo `main`. Spremembe v `main` vnašamo prek PR.
+1. Nalogo premaknemo iz `To Do` v `Doing`.
+2. Iz posodobljene `main` odpremo vejo, npr. `feat/us03-vnos-vozila`.
+3. Implementiramo izbrano nalogo in preverimo kriterije njene uporabniške zgodbe.
+4. Ustvarimo opisne commite, npr. `feat: dodaj API za lastna vozila (#12)`.
+5. Odpremo PR z opisom sprememb, preverjanj in povezavo `Closes #12`.
+6. Po preverjanju združimo PR v `main` in nalogo označimo `Done`.
 
-Datotek `.env`, gesel in ključev ne vključujemo v commit. `.env.example` sme vsebovati le vzorčne vrednosti; lock datoteke sodijo v repozitorij.
+`.env`, gesel in ključev ne vključujemo v commit; `.env.example` in `package-lock.json` sodita v repozitorij.
