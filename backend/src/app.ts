@@ -1,8 +1,12 @@
 import express, { type ErrorRequestHandler } from 'express';
 import { authenticate, requireProfile, requireRole, type VerifyToken } from './auth.js';
 import type { ProfileStore, Role } from './profiles.js';
+import type { Pool } from './db.js';
+import { vehicleRoutes } from './vehicles.js';
+import { bookingRoutes, slotRoutes } from './bookings.js';
+import { HttpError } from './errors.js';
 
-export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileStore; logError?: (error: unknown) => void }) {
+export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileStore; pool?: Pool; logError?: (error: unknown) => void }) {
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json({ limit: '10kb' }));
@@ -24,6 +28,11 @@ export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileSto
   });
 
   app.use('/api', requireProfile(deps.profiles));
+  if (deps.pool) {
+    app.use('/api/vehicles', vehicleRoutes(deps.pool));
+    app.use('/api/slots', slotRoutes(deps.pool));
+    app.use('/api/appointments', bookingRoutes(deps.pool));
+  }
   app.get('/api/auth/me', (_req, res) => { res.json(res.locals.profile); });
   app.get('/api/auth/profiles/:id', (req, res) => {
     if (req.params.id !== res.locals.user.id) {
@@ -44,6 +53,15 @@ export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileSto
   }
   app.use((_req, res) => { res.status(404).json({ error: 'Pot ne obstaja.' }); });
   const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
+    if (error instanceof HttpError) {
+      res.status(error.status).json({ error: error.message, ...(error.field ? { field: error.field } : {}) }); return;
+    }
+    if (error?.code === '23505') {
+      res.status(409).json({ error: 'Zapis s temi podatki že obstaja ali pa je rezervacija že zasedena.' }); return;
+    }
+    if (error?.code === '23P01') {
+      res.status(409).json({ error: 'Termin se prekriva z obstoječim terminom.' }); return;
+    }
     if (error?.type === 'entity.parse.failed') {
       res.status(400).json({ error: 'Zahteva vsebuje neveljaven JSON.' }); return;
     }
