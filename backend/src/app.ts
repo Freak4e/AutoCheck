@@ -1,0 +1,58 @@
+import express, { type ErrorRequestHandler } from 'express';
+import { authenticate, requireProfile, requireRole, type VerifyToken } from './auth.js';
+import type { ProfileStore, Role } from './profiles.js';
+
+export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileStore; logError?: (error: unknown) => void }) {
+  const app = express();
+  app.disable('x-powered-by');
+  app.use(express.json({ limit: '10kb' }));
+  app.get('/api/health', (_req, res) => { res.json({ status: 'ok' }); });
+  app.use('/api', (_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
+  app.use('/api', authenticate(deps.verifyToken));
+
+  app.post('/api/auth/profile', async (req, res) => {
+    const id = res.locals.user.id;
+    const existing = await deps.profiles.find(id);
+    if (existing) { res.json(existing); return; }
+    const name: unknown = req.body?.name;
+    if (typeof name !== 'string' || !name.trim() || name.trim().length > 100) {
+      res.status(400).json({ error: 'Ime je obvezno in sme vsebovati največ 100 znakov.', field: 'name' }); return;
+    }
+    // Deliberately ignore client-supplied ID and role, including Auth metadata.
+    const profile = await deps.profiles.create(id, name.trim());
+    res.status(201).json(profile);
+  });
+
+  app.use('/api', requireProfile(deps.profiles));
+  app.get('/api/auth/me', (_req, res) => { res.json(res.locals.profile); });
+  app.get('/api/auth/profiles/:id', (req, res) => {
+    if (req.params.id !== res.locals.user.id) {
+      res.status(404).json({ error: 'Profil ni dostopen.' }); return;
+    }
+    res.json(res.locals.profile);
+  });
+
+  const workspaces: { path: string; role: Role; title: string }[] = [
+    { path: 'customer', role: 'CUSTOMER', title: 'Moja vozila' },
+    { path: 'inspector', role: 'INSPECTOR', title: 'Razpored pregledov' },
+    { path: 'admin', role: 'ADMIN', title: 'Evidence postaje' },
+  ];
+  for (const workspace of workspaces) {
+    app.get(`/api/workspace/${workspace.path}`, requireRole(workspace.role), (_req, res) => {
+      res.json({ title: workspace.title, profile: res.locals.profile });
+    });
+  }
+  app.use((_req, res) => { res.status(404).json({ error: 'Pot ne obstaja.' }); });
+  const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
+    if (error?.type === 'entity.parse.failed') {
+      res.status(400).json({ error: 'Zahteva vsebuje neveljaven JSON.' }); return;
+    }
+    if (error?.type === 'entity.too.large') {
+      res.status(413).json({ error: 'Zahteva je prevelika.' }); return;
+    }
+    deps.logError?.(error);
+    res.status(503).json({ error: 'Storitev trenutno ni dosegljiva. Poskusite ponovno.' });
+  };
+  app.use(errorHandler);
+  return app;
+}
