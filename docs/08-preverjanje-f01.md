@@ -1,6 +1,6 @@
 # Preverjanje F01 – prijava in vloge
 
-Obseg: **US-01 in US-02** iz [2. naloge](05-uporabniske-zgodbe.md). F02–F07 še niso implementirani. Začetne strani vlog preverjajo prijavo in pravice, ne pa delovanja evidenc vozil ali pregledov.
+Obseg tega poročila: **US-01 in US-02** iz [2. naloge](05-uporabniske-zgodbe.md). F02/F03 sta bila nato implementirana in imata [ločeno poročilo](09-preverjanje-f02-f03.md). F04–F07 še čakajo na razvoj.
 
 ## Izvedena avtomatska preverjanja
 
@@ -28,7 +28,7 @@ Dodatno testi preverjajo SQL enoličnost, tuji ključ na Auth, dovoljene vloge, 
 
 ## Preostali preizkus na Supabase
 
-Spremljamo ga v [Issue #35](https://github.com/Freak4e/AutoCheck/issues/35), ki ostaja **To Do**. Ob razvoju niso bile na voljo lokalne nastavitve Supabase; ne trdimo, da je bil ta preizkus opravljen.
+Spremljamo ga v [Issue #35](https://github.com/Freak4e/AutoCheck/issues/35), ki ostaja **To Do**. Nastavitve Supabase so zdaj lokalno izpolnjene; preverjeni so povezava PostgreSQL s TLS, dostop do nastavitev Auth z javnim ključem in prikaz prijave v dejanskem brskalniku. Projekt zahteva potrditev e-pošte. Registracija s prejeto potrditveno povezavo in prijava dejanskega računa še nista bili izvedeni; ne trdimo, da ta preverjanja nadomestijo celoten prijavni potek.
 
 1. Po README pripravi shemo, izključi Data API in izpolni obe `.env`. Zaženi backend in frontend.
 2. Registriraj novo stranko z imenom, e-pošto in geslom, ki ustreza pravilom projekta. Ob vključeni potrditvi preveri navodilo in potrdi prejeto povezavo. Pred potrditvijo preveri zavrnjeno prijavo. Preizkusi tudi način brez potrditve, če ga bo projekt uporabljal.

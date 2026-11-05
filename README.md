@@ -4,9 +4,9 @@
 
 ## Trenutni obseg
 
-Prvi razvojni korak je **F01 – dostop glede na vlogo (US-01, US-02)**: registracija stranke, prijava, odjava, priprava profila in strežniško preverjanje vloge. Začetne strani posameznih vlog so ogrodja za nadaljnji razvoj. Vozila, termini, rezervacije in pregledi (F02–F07) še niso implementirani.
+Implementirani so **F01–F03 (US-01–US-06)**: registracija, prijava in vloge; vnos, seznam in dovoljen popravek lastnih vozil; administratorska objava 30-minutnih terminov ter rezervacija termina za lastno vozilo. Administrator ima bralni vpogled v vozila. F04–F07 (razpored, prevzem, ugotovitve in zgodovina pregledov) še čakajo na razvoj.
 
-Razčlenitev nalog, povezave na GitHub in načrt nadaljevanja so v [načrtu MVP](docs/07-nacrt-mvp.md). Za naslednji razvojni dan sta v `Doing` prvi nalogi dveh funkcionalnosti: evidence vozil (F02) in objave terminov (F03). Status pomeni načrtovano nadaljevanje, ne že izdelane funkcije.
+Razčlenitev nalog in povezave na GitHub so v [načrtu MVP](docs/07-nacrt-mvp.md). Za naslednji razvojni dan sta v `Doing` API prevzema pregleda (F04, #21) in API kontrolnega seznama (F05, #23). Status pomeni načrtovano nadaljevanje, ne že izdelane funkcije.
 
 ## Predpogoji
 
@@ -19,7 +19,7 @@ Docker in lokalna baza nista potrebna. Podatki in računi ostanejo na Supabase t
 ## 1. Priprava Supabase
 
 1. Ustvari oziroma odpri projekt Supabase.
-2. V **SQL Editorju** enkrat izvedi [database/schema.sql](database/schema.sql). Trenutno ustvari samo tabelo `profiles` za F01; ostale tabele bomo dodajali z naslednjimi funkcionalnostmi. Skripte ne izvajaj ponovno čez obstoječo shemo. Poznejše spremembe bodo v `database/changes/`.
+2. V **SQL Editorju** novega projekta po vrsti enkrat izvedi [database/schema.sql](database/schema.sql) (profili) in [database/changes/01-vehicles-slots-appointments.sql](database/changes/01-vehicles-slots-appointments.sql) (vozila, termini, rezervacije). Če F01 že uporabljaš, izvedi samo drugo datoteko. Skript ne izvajaj ponovno čez obstoječo shemo. V povezanem razvojnem projektu sta bili obe že izvedeni 5. 11. 2026.
 3. V nastavitvah **Data API** izključi Data API. Poslovni podatki potujejo prek Express API. Auth ostane omogočen. Profili dodatno uporabljajo RLS brez pravil za neposreden dostop.
 4. V **Authentication → Sign In / Providers** omogoči e-pošto in geslo. Nastavitev **Confirm email** določa, ali mora uporabnik pred prijavo potrditi e-pošto. Aplikacija upošteva oba načina.
 5. V **Authentication → URL Configuration** nastavi **Site URL** na `http://localhost:5173` in isti naslov dodaj med dovoljene preusmeritve.
@@ -95,7 +95,7 @@ VALUES
 
 Če profila že obstajata, uporabi ciljan `UPDATE public.profiles SET role = 'INSPECTOR' WHERE id = 'DEJANSKI_UUID';` oziroma `ADMIN`. To je ročna priprava osebja. Aplikacija ob ponovni prijavi obstoječega imena ali vloge ne prepiše.
 
-Stranka po prijavi vidi »Moja vozila«, preglednik »Razpored pregledov«, administrator pa »Evidence postaje«. Za zdaj strani pojasnjujejo, da pripadajoča funkcionalnost še čaka na razvoj; ne prikazujejo izmišljenih evidenc.
+Stranka po prijavi na strani »Moja vozila« vnese vozilo, popravi podatke pred prvo rezervacijo ter rezervira prost termin. Po rezervaciji je vozilo zaklenjeno za popravljanje, termin pa izgine iz ponudbe. Administrator v »Evidencah postaje« objavi termin in bere vozila. Preglednikov razpored je še ogrodje za F04. Seznam že ustvarjenih rezervacij in zgodovina sta naslednji nalogi; trenutni zaslon pokaže potrditev pravkar ustvarjene rezervacije.
 
 ## Preverjanje in gradnja
 
@@ -106,7 +106,15 @@ npm --prefix backend run build
 npm --prefix frontend run build
 ```
 
-Avtomatski testi ne potrebujejo pravih ključev. Auth je v testih nadzorovan, SQL profilov pa preverjamo v začasnem PostgreSQL okolju PGlite. To ne nadomesti preizkusa na lastnem Supabase projektu. Kriteriji US-01/US-02 in ročni preizkus so v [preverjanju F01](docs/08-preverjanje-f01.md).
+Običajnih **44 avtomatskih testov** ne potrebuje pravih ključev. Auth je v testih nadzorovan, SQL pa preverjamo v začasnem PostgreSQL okolju PGlite. Kriteriji US-01/US-02 so v [preverjanju F01](docs/08-preverjanje-f01.md), vozila in rezervacije pa v [preverjanju F02/F03](docs/09-preverjanje-f02-f03.md).
+
+Dodaten preizkus sočasnosti na bazi iz `backend/.env` zaženeš izrecno:
+
+```powershell
+npm --prefix backend run test:live
+```
+
+Preizkus ustvari začasne UUID-zapise za profile, vozila in termine ter jih po zaključku odstrani. Ne ustvarja uporabnih prijavnih računov in ne pošilja e-pošte. Uporablja dejanske transakcije in sočasne PostgreSQL povezave. Na povezanem Supabase projektu je bil uspešno izveden; dejanska registracija s potrditveno e-pošto ostaja v Issue #35.
 
 Preveden backend: `npm --prefix backend start`. Predogled prevedenega frontenda: `npm --prefix frontend run preview -- --port 5173`; backend mora teči. To ni navodilo za produkcijsko gostovanje.
 
@@ -137,6 +145,7 @@ docs/           zasnova, uporabniške zgodbe, wireframe-i, načrt in preverjanje
 6. [Wireframe-i](docs/06-wireframes.md)
 7. [Načrt MVP in GitHub naloge](docs/07-nacrt-mvp.md)
 8. [Preverjanje F01](docs/08-preverjanje-f01.md)
+9. [Preverjanje F02/F03](docs/09-preverjanje-f02-f03.md)
 
 [ADR-ji](docs/adr/) pojasnjujejo arhitekturne odločitve. Dokumenti prvih dveh nalog opisujejo celoten načrtovani MVP; zgornji trenutni obseg pove, kaj je že implementirano.
 
