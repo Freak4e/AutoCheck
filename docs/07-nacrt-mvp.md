@@ -7,7 +7,7 @@ Pripravljeno 5. 11. 2026 na podlagi [uporabniških zgodb](05-uporabniske-zgodbe.
 [AutoCheck – MVP: Kanban](https://github.com/users/Freak4e/projects/1/views/1) uporablja pogled **Board** in polje Status s stolpci **To Do**, **Doing**, **Done**. Vsaka razvojna naloga je GitHub Issue z opisom, oznako US in povezavo na kriterije sprejema.
 
 - **Done:** štiri implementacijske naloge za F01 (US-01, US-02), po uspešnih avtomatskih preverjanjih in združitvi PR.
-- **Doing:** natanko dve nalogi za 6. 11. 2026: [API vnosa vozila #9](https://github.com/Freak4e/AutoCheck/issues/9) in [obrazec vnosa vozila #10](https://github.com/Freak4e/AutoCheck/issues/10). To sta rezervirani nalogi za naslednji razvojni dan; F02 danes ni implementiran.
+- **Doing:** natanko dve nalogi za 6. 11. 2026: [API vnosa vozila #9](https://github.com/Freak4e/AutoCheck/issues/9) in [API objave terminov #13](https://github.com/Freak4e/AutoCheck/issues/13). To sta rezervirani nalogi za naslednji razvojni dan; F02 in F03 danes nista implementirana.
 - **To Do:** preostale naloge F02–F07 in [preverjanje F01 na pravem Supabase projektu #35](https://github.com/Freak4e/AutoCheck/issues/35).
 
 Stanja v spodnji tabeli so posnetek prvega razvojnega koraka. Za nadaljnje delo je vir trenutnega stanja GitHub Project.
@@ -29,10 +29,10 @@ Za F01 uporabljamo vejo `feat/f01-prijava-in-vloge`, opisne commite in PR s `Clo
 | [#7](https://github.com/Freak4e/AutoCheck/issues/7) | US-02 | F01 | Preverjanje prijave in vlog na API | Done |
 | [#8](https://github.com/Freak4e/AutoCheck/issues/8) | US-02 | F01 | Prijava, seja in odjava | Done |
 | [#9](https://github.com/Freak4e/AutoCheck/issues/9) | US-03 | F02 | API za vnos lastnega vozila | Doing |
-| [#10](https://github.com/Freak4e/AutoCheck/issues/10) | US-03 | F02 | Obrazec za vnos vozila | Doing |
+| [#10](https://github.com/Freak4e/AutoCheck/issues/10) | US-03 | F02 | Obrazec za vnos vozila | To Do |
 | [#11](https://github.com/Freak4e/AutoCheck/issues/11) | US-04 | F02 | API za branje in popravek vozil | To Do |
 | [#12](https://github.com/Freak4e/AutoCheck/issues/12) | US-04 | F02 | Seznam in urejanje lastnih vozil | To Do |
-| [#13](https://github.com/Freak4e/AutoCheck/issues/13) | US-05 | F03 | API in omejitve objave terminov | To Do |
+| [#13](https://github.com/Freak4e/AutoCheck/issues/13) | US-05 | F03 | API in omejitve objave terminov | Doing |
 | [#14](https://github.com/Freak4e/AutoCheck/issues/14) | US-05 | F03 | Administratorski obrazec za termine | To Do |
 | [#15](https://github.com/Freak4e/AutoCheck/issues/15) | US-06 | F03 | Transakcijska rezervacija termina | To Do |
 | [#16](https://github.com/Freak4e/AutoCheck/issues/16) | US-06 | F03 | Izbira vozila in rezervacija termina | To Do |
@@ -58,7 +58,7 @@ Za F01 uporabljamo vejo `feat/f01-prijava-in-vloge`, opisne commite in PR s `Clo
 
 ## Vrstni red nadaljevanja
 
-1. Izvedemo #9 in #10: vnos vozila. Nato US-04 dopolni seznam in dovoljen popravek pred prvo rezervacijo.
+1. Začnemo dve funkcionalnosti: F02 z API vnosa vozila (#9) in F03 z API objave terminov (#13). Obrazca (#10, #14) sledita uspešnima API nalogama. Nato US-04 dopolni seznam in dovoljen popravek vozila pred prvo rezervacijo.
 2. US-05/US-06 dodata objavo terminov in atomarno rezervacijo.
 3. US-07–US-09 dodajo spremljanje, razpored in transakcijski prevzem s kopijo sedmih postavk.
 4. US-10/US-11 dodata ocenjevanje, opombe in napake.

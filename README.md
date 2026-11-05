@@ -6,7 +6,7 @@
 
 Prvi razvojni korak je **F01 – dostop glede na vlogo (US-01, US-02)**: registracija stranke, prijava, odjava, priprava profila in strežniško preverjanje vloge. Začetne strani posameznih vlog so ogrodja za nadaljnji razvoj. Vozila, termini, rezervacije in pregledi (F02–F07) še niso implementirani.
 
-Razčlenitev nalog, povezave na GitHub in načrt nadaljevanja so v [načrtu MVP](docs/07-nacrt-mvp.md). Dve nalogi za vnos vozil sta namenjeni naslednjemu razvojnemu dnevu; status `Doing` pomeni načrtovano nadaljevanje, ne že izdelane funkcije.
+Razčlenitev nalog, povezave na GitHub in načrt nadaljevanja so v [načrtu MVP](docs/07-nacrt-mvp.md). Za naslednji razvojni dan sta v `Doing` prvi nalogi dveh funkcionalnosti: evidence vozil (F02) in objave terminov (F03). Status pomeni načrtovano nadaljevanje, ne že izdelane funkcije.
 
 ## Predpogoji
 
