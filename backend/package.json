@@ -10,8 +10,9 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "tsx --test test/auth.test.ts test/domain.test.ts",
-    "test:live": "tsx --test test/live-domain.test.ts"
+    "test": "tsx --test test/auth.test.ts test/domain.test.ts test/inspections.test.ts",
+    "test:live": "tsx --test test/live-domain.test.ts",
+    "test:live:inspections": "tsx --test test/live-inspections.test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",

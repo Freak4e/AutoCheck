@@ -35,7 +35,7 @@ it('sends restored session to the backend and opens the customer starting page',
 });
 
 it.each([['INSPECTOR', 'Razpored pregledov', '/razpored'], ['ADMIN', 'Evidence postaje', '/evidence']])('uses persisted %s role for the starting page', async (role, title, path) => {
-  fetchMock.mockImplementation(async (path: string) => ({ ok: true, json: async () => ['/api/vehicles', '/api/slots'].includes(path) ? [] : ({ id: 'test-user', name: 'Osebje', role }) }));
+  fetchMock.mockImplementation(async (path: string) => ({ ok: true, json: async () => ['/api/vehicles', '/api/slots', '/api/appointments'].includes(path) ? [] : ({ id: 'test-user', name: 'Osebje', role }) }));
   render(<App />);
   expect(await screen.findByRole('heading', { name: title })).toBeInTheDocument();
   expect(window.location.pathname).toBe(path);
@@ -79,4 +79,18 @@ it('ignores an old profile response that arrives after sign-out', async () => {
   await act(async () => { resolve({ ok: true, json: async () => ({ id: 'test-user', name: 'Ana', role: 'ADMIN' }) }); });
   expect(screen.getByRole('heading', { name: 'Dobrodošli nazaj' })).toBeInTheDocument();
   expect(screen.queryByRole('heading', { name: 'Evidence postaje' })).not.toBeInTheDocument();
+});
+
+it('keeps unsaved inspection notes through a token refresh of the same user', async () => {
+  fetchMock.mockImplementation(async (path: string) => ({ ok: true, json: async () => {
+    if (path === '/api/appointments') return [{ id: 'a1', status: 'IN_PROGRESS', startsAt: '2020-01-01T10:00:00Z', endsAt: '2020-01-01T10:30:00Z', registrationNumber: 'MB123', isMine: true, inspectionId: 'i1' }];
+    if (path === '/api/inspections/i1') return { id: 'i1', status: 'IN_PROGRESS', registrationNumber: 'MB123', startsAt: '2020-01-01T10:00:00Z', endsAt: '2020-01-01T10:30:00Z', startedAt: '2020-01-01T10:01:00Z', notes: null, items: [] };
+    return { id: 'test-user', name: 'Preglednik', role: 'INSPECTOR' };
+  } }));
+  const user = userEvent.setup(); render(<App />);
+  await user.click(await screen.findByRole('button', { name: 'Nadaljuj pregled' }));
+  await user.type(await screen.findByLabelText('Splošna opomba pregleda'), 'Neshranjena opomba');
+  act(() => change('TOKEN_REFRESHED', { ...session, access_token: 'new-token' }));
+  await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/auth/profile', expect.objectContaining({ headers: expect.objectContaining({ Authorization: 'Bearer new-token' }) })));
+  expect(screen.getByLabelText('Splošna opomba pregleda')).toHaveValue('Neshranjena opomba');
 });
