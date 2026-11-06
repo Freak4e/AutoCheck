@@ -5,6 +5,7 @@ import type { Pool } from './db.js';
 import { vehicleRoutes } from './vehicles.js';
 import { bookingRoutes, slotRoutes } from './bookings.js';
 import { HttpError } from './errors.js';
+import { inspectorAppointmentRoutes, inspectionRoutes } from './inspections.js';
 
 export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileStore; pool?: Pool; logError?: (error: unknown) => void }) {
   const app = express();
@@ -32,6 +33,8 @@ export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileSto
     app.use('/api/vehicles', vehicleRoutes(deps.pool));
     app.use('/api/slots', slotRoutes(deps.pool));
     app.use('/api/appointments', bookingRoutes(deps.pool));
+    app.use('/api/appointments', inspectorAppointmentRoutes(deps.pool));
+    app.use('/api/inspections', inspectionRoutes(deps.pool));
   }
   app.get('/api/auth/me', (_req, res) => { res.json(res.locals.profile); });
   app.get('/api/auth/profiles/:id', (req, res) => {
@@ -57,6 +60,9 @@ export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileSto
       res.status(error.status).json({ error: error.message, ...(error.field ? { field: error.field } : {}) }); return;
     }
     if (error?.code === '23505') {
+      if (error.constraint === 'appointments_one_active_station' || error.constraint === 'inspections_appointment_id_key') {
+        res.status(409).json({ error: 'Začetek ni mogoč: pregledno mesto je zasedeno ali je rezervacija že prevzeta.' }); return;
+      }
       res.status(409).json({ error: 'Zapis s temi podatki že obstaja ali pa je rezervacija že zasedena.' }); return;
     }
     if (error?.code === '23P01') {
