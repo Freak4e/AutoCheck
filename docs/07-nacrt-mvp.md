@@ -1,15 +1,15 @@
 # Načrt razvoja MVP
 
-Posodobljeno 5. 11. 2026 na podlagi [uporabniških zgodb](05-uporabniske-zgodbe.md) in [zasnove](04-arhitektura-in-tehnoloski-sklad.md).
+Posodobljeno 6. 11. 2026 na podlagi [uporabniških zgodb](05-uporabniske-zgodbe.md) in [zasnove](04-arhitektura-in-tehnoloski-sklad.md).
 
 ## GitHub Projects
 
 [AutoCheck – MVP: Kanban](https://github.com/users/Freak4e/projects/1/views/1) je pogled **Board** s stolpci **To Do**, **Doing**, **Done**, razvrščenimi po polju Status. Vsaka kartica je manjši GitHub Issue z opisom in oznako US; število kartic ne pomeni števila celotnih funkcionalnosti.
 
-Po združitvi drugega PR: **12 Done, 2 Doing, 17 To Do**.
+Ob odprtem PR za US-08–US-10: **12 Done, 6 Doing, 13 To Do**. Šest nalog #19–#24 je implementiranih, a do združitve ostanejo v Doing. Po združitvi jih prestavimo v Done (18 Done, 13 To Do).
 
 - **Done:** US-01–US-06, po dve implementacijski nalogi za vsako zgodbo (#5–#16). Obseg F01–F03: prijava in vloge, lastna vozila, objava in rezervacija terminov.
-- **Doing za 6. 11. 2026:** [#21 – prevzem pregleda (F04)](https://github.com/Freak4e/AutoCheck/issues/21) in [#23 – kontrolni seznam (F05)](https://github.com/Freak4e/AutoCheck/issues/23). Najprej prevzem pripravi tabele in kopije sedmih postavk, nato ocenjevanje uporabi te zapise. Status je načrt nadaljevanja, ne že implementirana funkcija.
+- **Doing:** #19–#24: API in UI razporeda, prevzema in kontrolnega seznama. Veja `feat/us08-us10-pregledi`, en PR s Closes povezavo za vsako nalogo.
 - **To Do:** preostale naloge F04–F07 in [#35 – dejanska registracija s potrditveno e-pošto](https://github.com/Freak4e/AutoCheck/issues/35). Celotna US-15 ostaja odprta, čeprav je bralni vpogled v vozila za administratorja že pripravljen.
 
 Tabela je posnetek tega razvojnega koraka; vir trenutnega stanja je GitHub Project.
@@ -19,11 +19,11 @@ Tabela je posnetek tega razvojnega koraka; vir trenutnega stanja je GitHub Proje
 1. F01 / US-01, US-02: registracija, prijava, seja, odjava, profil in pravice. Veja `feat/f01-prijava-in-vloge`, [PR #36](https://github.com/Freak4e/AutoCheck/pull/36), zapira #5–#8.
 2. F02/F03 / US-03–US-06: vozila, objava terminov in transakcijska rezervacija. Veja `feat/f02-f03-vozila-in-termini`; PR vsebuje Closes #9 do Closes #16. Na povezani bazi sta izvedeni začetna shema ter sprememba 01.
 
-Testi: **44 običajnih avtomatskih testov** ter **1 integracijski preizkus sočasnosti na dejanski Supabase bazi**. Auth v avtomatskih testih ostaja nadzorovan; #35 se zato ne zapre. Podrobnosti so v [F01](08-preverjanje-f01.md) in [F02/F03](09-preverjanje-f02-f03.md).
+Testi na tej veji: **62 običajnih avtomatskih testov**, uspešna gradnja obeh delov ter nov integracijski preizkus sočasnega prevzema na Supabase v ločeni začasni shemi. [Poročilo US-08–US-10](10-preverjanje-us08-us10.md). Auth ostaja nadzorovan v testih; #35 se ne zapre.
 
 ## Naloge
 
-| Issue | Zgodba | Funkcionalnost | Naloga | Status po drugem PR |
+| Issue | Zgodba | Funkcionalnost | Naloga | Status ob odprtem PR |
 | --- | --- | --- | --- | --- |
 | [#5](https://github.com/Freak4e/AutoCheck/issues/5) | US-01 | F01 | SQL profili in API priprava računa | Done |
 | [#6](https://github.com/Freak4e/AutoCheck/issues/6) | US-01 | F01 | Registracijski obrazec | Done |
@@ -59,7 +59,7 @@ Testi: **44 običajnih avtomatskih testov** ter **1 integracijski preizkus soča
 
 ## Nadaljevanje
 
-- Najprej dopolnimo F04/F05: spremljanje rezervacij in razpored, prevzem ter sedem ocenljivih postavk. #21 je predpogoj za dejansko povezavo #23.
+- Po pregledu PR in SQL spremembe 02 zaključimo #19–#24. Nato dodamo spremljanje lastnih rezervacij (US-07); razpored, prevzem in ocenjevanje so že v tem PR.
 - Nato F06: napake po postavkah z resnostjo MINOR/MAJOR in dovoljenim popravljanjem do zaključka.
 - Nato F07: atomaren zaključek, izračun izida, zgodovina in bralni prikaz ugotovitev.
 - Na koncu povežemo celoten administratorski bralni vpogled US-15 in izvedemo celoten sprejemni scenarij.
