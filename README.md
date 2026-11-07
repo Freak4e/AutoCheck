@@ -8,7 +8,7 @@ Implementirani so prijava in vloge, vozila, rezervacija terminov, razpored in pr
 
 Razčlenitev nalog je v [načrtu MVP](docs/07-nacrt-mvp.md). Današnji korak obsega devet nalog **#25–#33**. Po združitvi PR je stanje Kanbana **27 Done, 2 Doing, 2 To Do**. [Preverjanje današnjega koraka](docs/11-preverjanje-us11-us15.md).
 
-Celotna shema je sestavljena iz `database/schema.sql` in sprememb `01`, `02`, `03` v `database/changes/`. Izvajaj jih po vrsti in samo enkrat. Stanje povezane razvojne baze je navedeno spodaj.
+Celotna shema je sestavljena iz `database/schema.sql` in sprememb `01`, `02`, `03` v `database/changes/`. Izvajaj jih po vrsti in samo enkrat. Navodila za prvo pripravo in nadgradnjo so spodaj.
 
 ## Predpogoji
 
@@ -21,7 +21,7 @@ Docker in lokalna baza nista potrebna. Podatki in računi ostanejo na Supabase t
 ## 1. Priprava Supabase
 
 1. Ustvari oziroma odpri projekt Supabase.
-2. V **SQL Editorju** novega projekta po vrsti enkrat izvedi [database/schema.sql](database/schema.sql) (profili) in [database/changes/01-vehicles-slots-appointments.sql](database/changes/01-vehicles-slots-appointments.sql) (vozila, termini, rezervacije). Če F01 že uporabljaš, izvedi samo drugo datoteko. Skript ne izvajaj ponovno čez obstoječo shemo. V povezanem razvojnem projektu sta bili obe že izvedeni 5. 11. 2026.
+2. V **SQL Editorju** novega projekta po vrsti enkrat izvedi [schema.sql](database/schema.sql), [spremembo 01](database/changes/01-vehicles-slots-appointments.sql), [spremembo 02](database/changes/02-inspections-checklist.sql) in [spremembo 03](database/changes/03-defects.sql). Na obstoječem projektu izvedi samo manjkajoče spremembe; nobene datoteke ne izvajaj ponovno čez obstoječe tabele. Začetna shema in 01 sta bili na povezani bazi izvedeni 5. 11. 2026; 02 in 03 se izvedeta ob uvedbi PR za zaključevanje in zgodovino.
 3. V nastavitvah **Data API** izključi Data API. Poslovni podatki potujejo prek Express API. Auth ostane omogočen. Profili dodatno uporabljajo RLS brez pravil za neposreden dostop.
 4. V **Authentication → Sign In / Providers** omogoči e-pošto in geslo. Nastavitev **Confirm email** določa, ali mora uporabnik pred prijavo potrditi e-pošto. Aplikacija upošteva oba načina.
 5. V **Authentication → URL Configuration** nastavi **Site URL** na `http://localhost:5173` in isti naslov dodaj med dovoljene preusmeritve.
