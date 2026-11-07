@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api, ApiError } from './api';
 import { type Vehicle, type Slot, type Booking, dateTime, time } from './domain';
 import { VehicleForm } from './VehicleForm';
+import { VehicleHistory } from './VehicleHistory';
 
 export function CustomerDashboard({ token }: { token: string }) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -64,5 +65,6 @@ export function CustomerDashboard({ token }: { token: string }) {
       </div>
       <button className="primary" disabled={!vehicleId || !slotId || busy || loading || Boolean(error)} onClick={reserve}>{busy ? 'Potrjevanje …' : 'Potrdi rezervacijo'}</button>
     </section>
+    <VehicleHistory vehicles={vehicles} token={token} />
   </div>;
 }

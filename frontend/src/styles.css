@@ -57,6 +57,8 @@ input[aria-invalid=true] { border-color: #b74736; }
 .step-number { font-size: 35px; padding: 25px; color: #76964b; background: #f1f5e9; border-radius: 14px; }
 .loading { min-height: 65vh; padding: 100px; text-align: center; }
 .dashboard { margin-top: 35px; }
+.inspection-fields { border: 0; padding: 0; margin: 0; min-width: 0; }
+.defects { margin-top: 22px; border-top: 1px solid #dfe5db; padding-top: 12px; }
 .section-heading, .actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .actions { justify-content: flex-start; flex-wrap: wrap; }
 .section-heading { margin: 24px 0 18px; }

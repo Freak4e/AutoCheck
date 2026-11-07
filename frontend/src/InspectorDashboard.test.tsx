@@ -30,7 +30,7 @@ it('starts a booking and opens its seven unassessed items', async () => {
   const user = userEvent.setup(); render(<InspectorDashboard token="token" />);
   await user.click(await screen.findByRole('button', { name: 'Začni pregled' }));
   expect(await screen.findByRole('heading', { name: 'Pregled · MB123' })).toBeInTheDocument();
-  expect(screen.getAllByRole('combobox')).toHaveLength(7);
+  expect(screen.getAllByRole('combobox', { name: /^Ocena/ })).toHaveLength(7);
   expect(screen.getByLabelText('Ocena · Zavore')).toHaveValue('NOT_CHECKED');
   expect(fetchMock).toHaveBeenCalledWith('/api/appointments/a1/start', expect.objectContaining({ method: 'POST', headers: { Authorization: 'Bearer token' } }));
 });
@@ -82,4 +82,30 @@ it('opens own completed inspection with disabled inputs and no save actions', as
   expect(await screen.findByLabelText('Ocena · Zavore')).toBeDisabled();
   expect(screen.queryByRole('button', { name: 'Shrani postavko' })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Shrani opombo' })).not.toBeInTheDocument();
+});
+
+it('blocks completion for unsaved edits and switches to read-only after confirmation', async () => {
+  vi.spyOn(window, 'confirm').mockReturnValue(true);
+  const original = fetchMock.getMockImplementation() as (url: string, options: { method?: string; body?: string }) => Promise<ReturnType<typeof response>>;
+  fetchMock.mockImplementation(async (url, options) => url.endsWith('/complete') ? response({ status: 'COMPLETED', finalResult: 'PASSED', completedAt: '2020-01-01T11:00:00Z' }) : original(url, options));
+  const user = userEvent.setup(); render(<InspectorDashboard token="token" />);
+  await user.click(await screen.findByRole('button', { name: 'Začni pregled' }));
+  await user.type(await screen.findByLabelText('Splošna opomba pregleda'), 'Opomba');
+  expect(screen.getByRole('button', { name: 'Zaključi pregled' })).toBeDisabled();
+  await user.click(screen.getByRole('button', { name: 'Shrani opombo' }));
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Zaključi pregled' })).toBeEnabled());
+  await user.click(screen.getByRole('button', { name: 'Zaključi pregled' }));
+  expect(await screen.findByText(/Zaključen pregled · PASSED/)).toBeInTheDocument();
+  expect(screen.getByLabelText('Ocena · Zavore')).toBeDisabled();
+  expect(screen.queryByRole('button', { name: 'Zaključi pregled' })).not.toBeInTheDocument();
+});
+it('retains editable findings after incomplete-completion rejection', async () => {
+  vi.spyOn(window, 'confirm').mockReturnValue(true);
+  const original = fetchMock.getMockImplementation() as (url: string, options: { method?: string; body?: string }) => Promise<ReturnType<typeof response>>;
+  fetchMock.mockImplementation(async (url, options) => url.endsWith('/complete') ? response({ error: 'Pregled ni popoln.' }, 409) : original(url, options));
+  const user = userEvent.setup(); render(<InspectorDashboard token="token" />);
+  await user.click(await screen.findByRole('button', { name: 'Začni pregled' }));
+  await user.click(await screen.findByRole('button', { name: 'Zaključi pregled' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Pregled ni popoln');
+  expect(screen.getByLabelText('Ocena · Zavore')).toBeEnabled();
 });

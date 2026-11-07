@@ -4,11 +4,11 @@
 
 ## Trenutni obseg
 
-Implementirani so **F01–F03 (US-01–US-06)**: prijava, vozila ter objava in rezervacija terminov. Ta veja dodaja **US-08–US-10**: razpored preglednika, transakcijski prevzem in ocenjevanje sedmih postavk z opombami. US-07 (rezervacije stranke), napake, zaključek in zgodovina ostajajo v ločenih nalogah.
+Implementirani so prijava in vloge, vozila, rezervacija terminov, razpored in prevzem, ocenjevanje postavk, napake, zaključek z izračunom izida ter zgodovina in bralne ugotovitve lastnega vozila. Administrator ima pripravljen bralni API. Za jutri ostanejo spremljanje lastnih odprtih rezervacij (US-07), administratorski vmesnik evidenc (#34) in končni prijavni preizkus (#35).
 
-Razčlenitev nalog je v [načrtu MVP](docs/07-nacrt-mvp.md). Šest nalog **#19–#24** je pripravljenih na veji `feat/us08-us10-pregledi` in ostane v `Doing` do pregleda ter združitve PR. [Preverjanje novega koraka](docs/10-preverjanje-us08-us10.md).
+Razčlenitev nalog je v [načrtu MVP](docs/07-nacrt-mvp.md). Današnji korak obsega devet nalog **#25–#33**. Po združitvi PR je stanje Kanbana **27 Done, 2 Doing, 2 To Do**. [Preverjanje današnjega koraka](docs/11-preverjanje-us11-us15.md).
 
-Za uporabo novih zaslonov po pregledu PR enkrat izvedi **[SQL spremembo 02](database/changes/02-inspections-checklist.sql)**, za začetno shemo in spremembo 01. Na povezani aplikacijski bazi še ni izvedena; integracijski test je uporabil ločeno začasno shemo.
+Celotna shema je sestavljena iz `database/schema.sql` in sprememb `01`, `02`, `03` v `database/changes/`. Izvajaj jih po vrsti in samo enkrat. Stanje povezane razvojne baze je navedeno spodaj.
 
 ## Predpogoji
 
@@ -97,7 +97,7 @@ VALUES
 
 Če profila že obstajata, uporabi ciljan `UPDATE public.profiles SET role = 'INSPECTOR' WHERE id = 'DEJANSKI_UUID';` oziroma `ADMIN`. To je ročna priprava osebja. Aplikacija ob ponovni prijavi obstoječega imena ali vloge ne prepiše.
 
-Stranka vnese vozilo in rezervira termin; administrator objavlja termine in bere vozila. Preglednik vidi razpored, od začetka termina prevzame rezervacijo ter izrecno shrani ocene/opombe. Lasten pregled lahko nadaljuje po ponovni prijavi. Zaključek še ni implementiran (US-12), zato prevzet pregled ostane IN_PROGRESS; stanj ne popravljaj ročno. Seznam rezervacij stranke in zgodovina ostajata ločeni nalogi.
+Stranka vnese vozilo, rezervira termin in bere zgodovino ter ugotovitve zaključenih pregledov. Preglednik vidi razpored, prevzame rezervacijo, izrecno shrani ocene/opombe in napake ter potrdi zaključek. Strežnik preveri popolnost, izračuna izid in sprosti pregledno mesto. Zaključenih ugotovitev ni mogoče spreminjati. Administrator ima bralni API; celoten vmesnik evidenc je še v #34.
 
 ## Preverjanje in gradnja
 
@@ -108,7 +108,7 @@ npm --prefix backend run build
 npm --prefix frontend run build
 ```
 
-Običajnih **62 avtomatskih testov** ne potrebuje pravih ključev. Auth je v testih nadzorovan, SQL pa preverjamo v začasnem PostgreSQL okolju PGlite. Kriteriji US-01/US-02 so v [preverjanju F01](docs/08-preverjanje-f01.md), vozila in rezervacije pa v [preverjanju F02/F03](docs/09-preverjanje-f02-f03.md).
+Običajnih **77 avtomatskih testov** ne potrebuje pravih ključev. Auth je v testih nadzorovan, SQL pa preverjamo v začasnem PostgreSQL okolju PGlite. Kriteriji US-01/US-02 so v [preverjanju F01](docs/08-preverjanje-f01.md), vozila in rezervacije pa v [preverjanju F02/F03](docs/09-preverjanje-f02-f03.md).
 
 Dodaten preizkus sočasnosti na bazi iz `backend/.env` zaženeš izrecno:
 
@@ -149,6 +149,7 @@ docs/           zasnova, uporabniške zgodbe, wireframe-i, načrt in preverjanje
 8. [Preverjanje F01](docs/08-preverjanje-f01.md)
 9. [Preverjanje F02/F03](docs/09-preverjanje-f02-f03.md)
 10. [Preverjanje US-08–US-10](docs/10-preverjanje-us08-us10.md)
+11. [Preverjanje US-11–US-15](docs/11-preverjanje-us11-us15.md)
 
 [ADR-ji](docs/adr/) pojasnjujejo arhitekturne odločitve. Dokumenti prvih dveh nalog opisujejo celoten načrtovani MVP; zgornji trenutni obseg pove, kaj je že implementirano.
 
