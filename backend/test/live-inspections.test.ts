@@ -23,7 +23,7 @@ test('real PostgreSQL arbitrates same/different appointment takeovers and rolls 
   let created = false;
   try {
     await raw.query(`CREATE SCHEMA ${schema}`); created = true;
-    for (const file of ['schema.sql', 'changes/01-vehicles-slots-appointments.sql', 'changes/02-inspections-checklist.sql']) {
+    for (const file of ['schema.sql', 'changes/01-vehicles-slots-appointments.sql', 'changes/02-inspections-checklist.sql', 'changes/03-defects.sql']) {
       await pool.query(await readFile(new URL('../../database/' + file, import.meta.url), 'utf8'));
     }
     for (const [name, id] of Object.entries(ids)) {
@@ -52,6 +52,23 @@ test('real PostgreSQL arbitrates same/different appointment takeovers and rolls 
     await claim(appointments[0], 'a').expect(409);
     assert.equal((await pool.query('SELECT * FROM public.inspections')).rows.length, 0);
     assert.equal((await pool.query("SELECT * FROM public.appointments WHERE status = 'BOOKED'")).rows.length, 2);
+    await pool.query('UPDATE public.checklist_template_items SET is_active = true');
+    const first = (await claim(appointments[0], 'a').expect(201)).body.id;
+    await pool.query("UPDATE public.inspection_items SET result = 'PASS' WHERE inspection_id = $1", [first]);
+    const finish = (id: string) => request(app).post(`/api/inspections/${id}/complete`).set('Authorization', 'Bearer a');
+    const repeated = await Promise.all([finish(first), finish(first)]);
+    assert.deepEqual(repeated.map(r => r.status).sort(), [200, 409]);
+    const second = (await claim(appointments[1], 'a').expect(201)).body.id;
+    await pool.query("UPDATE public.inspection_items SET result = 'PASS' WHERE inspection_id = $1", [second]);
+    const item = (await pool.query('SELECT id FROM public.inspection_items WHERE inspection_id = $1 ORDER BY sort_order LIMIT 1', [second])).rows[0].id;
+    await pool.query("UPDATE public.inspection_items SET result = 'FAIL' WHERE id = $1", [item]);
+    const defect = (await pool.query("INSERT INTO public.defects (inspection_item_id, description, severity) VALUES ($1, 'Fixture', 'MINOR') RETURNING id", [item])).rows[0].id;
+    const competing = await Promise.all([finish(second), request(app).patch(`/api/inspections/${second}/defects/${defect}`).set('Authorization', 'Bearer a').send({ description: 'Fixture', severity: 'MAJOR' })]);
+    assert.equal(competing[0].status, 200); assert.ok([200,409].includes(competing[1].status));
+    const stored = (await pool.query('SELECT severity FROM public.defects WHERE id = $1', [defect])).rows[0].severity;
+    const final = (await pool.query('SELECT final_result FROM public.inspections WHERE id = $1', [second])).rows[0].final_result;
+    assert.equal(final, stored === 'MAJOR' ? 'FAILED' : 'REINSPECTION_REQUIRED');
+    await request(app).delete(`/api/inspections/${second}/defects/${defect}`).set('Authorization', 'Bearer a').expect(409);
   } finally {
     try {
       if (created && /^autocheck_test_[a-f0-9]{32}$/.test(schema)) await raw.query(`DROP SCHEMA ${schema} CASCADE`);
