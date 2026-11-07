@@ -3,7 +3,8 @@
 :root { font-family: 'DM Sans', system-ui, sans-serif; color: #24342c; background: #f8f9f5; font-synthesis: none; text-rendering: optimizeLegibility; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
+textarea { width: 100%; min-height: 90px; resize: vertical; border: 1px solid #d6dfd2; border-radius: 7px; padding: 10px 13px; color: #20352a; background: #fcfdfb; }
 button, a, input { -webkit-tap-highlight-color: transparent; }
 button { cursor: pointer; transition: background .15s; }
 button:disabled { cursor: wait; opacity: .65; }

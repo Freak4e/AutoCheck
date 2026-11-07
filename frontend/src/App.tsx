@@ -5,6 +5,7 @@ import { api, ApiError, type Profile, type Role } from './api';
 import { supabase } from './supabase';
 import { CustomerDashboard } from './CustomerDashboard';
 import { AdminDashboard } from './AdminDashboard';
+import { InspectorDashboard } from './InspectorDashboard';
 
 const areas: Record<Role, { api: string; path: string; title: string; label: string; next: string }> = {
   CUSTOMER: { api: 'customer', path: '/vozila', title: 'Moja vozila', label: 'Stranka', next: 'Vnos in seznam vaših vozil sta naslednji korak razvoja.' },
@@ -19,6 +20,7 @@ function SignedApp({ client }: { client: SupabaseClient }) {
   const [retry, setRetry] = useState(0);
   const [signingOut, setSigningOut] = useState(false);
   const [path, setPath] = useState(window.location.pathname);
+  const [inspectionDirty, setInspectionDirty] = useState(false);
 
   useEffect(() => {
     const onPop = () => setPath(window.location.pathname);
@@ -33,7 +35,8 @@ function SignedApp({ client }: { client: SupabaseClient }) {
       // Keep this callback synchronous: Supabase holds an Auth lock here.
       eventReceived = true;
       if (!active) return;
-      setProfile(null); setError(''); setSession(nextSession);
+      setProfile(previous => previous?.id === nextSession?.user.id ? previous : null);
+      setError(''); setSession(nextSession);
     });
     void client.auth.getSession().then(({ data, error: sessionError }) => {
       if (!active || eventReceived) return;
@@ -48,7 +51,8 @@ function SignedApp({ client }: { client: SupabaseClient }) {
   useEffect(() => {
     if (!session) return;
     const controller = new AbortController();
-    setProfile(null); setError('');
+    // A routine token refresh must not unmount an editor with unsaved notes.
+    setProfile(previous => previous?.id === session.user.id ? previous : null); setError('');
     async function load() {
       try {
         const current = await api<Profile>('/auth/profile', session!.access_token, {
@@ -79,6 +83,7 @@ function SignedApp({ client }: { client: SupabaseClient }) {
   }, [session, retry, path, client]);
 
   async function signOut() {
+    if (inspectionDirty && !window.confirm('Imate neshranjene spremembe pregleda. Se želite vseeno odjaviti?')) return;
     setSigningOut(true); setError('');
     try {
       const { error: signOutError } = await client.auth.signOut({ scope: 'local' });
@@ -103,7 +108,7 @@ function SignedApp({ client }: { client: SupabaseClient }) {
     </section> : !profile ? <p role="status">Nalaganje profila …</p> : <>
       <h1>{areas[profile.role].title}</h1>
       <p className="welcome">Pozdravljeni, <strong>{profile.name}</strong>. <span className="badge">{areas[profile.role].label}</span></p>
-      {profile.role === 'CUSTOMER' ? <CustomerDashboard token={session.access_token} /> : profile.role === 'ADMIN' ? <AdminDashboard token={session.access_token} /> : <section className="panel placeholder"><span className="step-number" aria-hidden="true">01</span><div><p className="eyebrow">DOSTOP JE PRIPRAVLJEN</p><h2>Razpored sledi v naslednjem koraku.</h2><p>{areas[profile.role].next}</p><p className="muted">Ta del aplikacije še ni implementiran.</p></div></section>}
+      {profile.role === 'CUSTOMER' ? <CustomerDashboard token={session.access_token} /> : profile.role === 'ADMIN' ? <AdminDashboard token={session.access_token} /> : <InspectorDashboard token={session.access_token} onDirtyChange={setInspectionDirty} />}
     </>}
   </main>;
 }
