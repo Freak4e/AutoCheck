@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { api, ApiError } from './api';
 import { dateTime, time } from './domain';
+import { DefectsEditor, type Defect } from './DefectsEditor';
 
 export type ScheduleRow = {
   id: string; status: 'BOOKED' | 'IN_PROGRESS' | 'COMPLETED'; startsAt: string; endsAt: string;
   registrationNumber: string; manufacturer: string; model: string; year: number; vin: string;
   inspectionId: string | null; isMine: boolean; canStart: boolean; stationBusy: boolean; overdue: boolean;
 };
-type Item = { id: string; category: string; name: string; result: 'PASS' | 'FAIL' | 'NOT_CHECKED'; notes: string | null };
+type Item = { id: string; category: string; name: string; result: 'PASS' | 'FAIL' | 'NOT_CHECKED'; notes: string | null; defects?: Defect[] };
 export type Inspection = Omit<ScheduleRow, 'inspectionId' | 'isMine' | 'canStart' | 'stationBusy' | 'overdue'> & {
   startedAt: string; completedAt: string | null; finalResult: string | null; notes: string | null; items: Item[];
 };
@@ -75,6 +76,14 @@ function InspectionEditor({ id, token, onBack, onDirty }: { id: string; token: s
   const [error, setError] = useState('');
   const [retry, setRetry] = useState(0);
   const [changed, setChanged] = useState<Record<string, boolean>>({});
+  const [finishing, setFinishing] = useState(false); const [finishError, setFinishError] = useState('');
+  async function finish() {
+    if (finishing || Object.values(changed).some(Boolean)) return;
+    if (!window.confirm('Zaključite pregled? Po zaključku podatkov ne bo več mogoče spreminjati.')) return;
+    setFinishing(true); setFinishError('');
+    try { const result = await api<{ status: 'COMPLETED'; finalResult: string; completedAt: string }>(`/inspections/${id}/complete`, token, { method: 'POST' }); setData(previous => previous ? { ...previous, ...result } : previous); setChanged({}); }
+    catch (e) { setFinishError(message(e)); } finally { setFinishing(false); }
+  }
   useEffect(() => { onDirty(Object.values(changed).some(Boolean)); }, [changed, onDirty]);
   function mark(key: string, dirty: boolean) { setChanged(previous => previous[key] === dirty ? previous : { ...previous, [key]: dirty }); }
   useEffect(() => {
@@ -85,16 +94,18 @@ function InspectionEditor({ id, token, onBack, onDirty }: { id: string; token: s
     return () => controller.abort();
   }, [id, token, retry]);
   return <section className="dashboard">
-    <button className="secondary" onClick={onBack}>Nazaj na razpored</button>
+    <button className="secondary" disabled={finishing} onClick={onBack}>Nazaj na razpored</button>
     {error ? <><p role="alert" className="alert error">{error}</p><button onClick={() => setRetry(value => value + 1)}>Poskusi ponovno</button></> : !data ? <p role="status">Nalaganje pregleda …</p> : <>
       <h2>Pregled · {data.registrationNumber}</h2><p>{data.manufacturer} {data.model} · VIN {data.vin}</p>
       <p className="muted">Termin: {dateTime(data.startsAt)}–{time(data.endsAt)} · Dejanski začetek: {dateTime(data.startedAt)}</p>
       {data.status === 'IN_PROGRESS' && Date.now() > Date.parse(data.endsAt) && <p className="locked">Pregled presega načrtovani konec termina.</p>}
       {data.status === 'COMPLETED' && <p className="alert success">Zaključen pregled · {data.finalResult} · {data.completedAt && dateTime(data.completedAt)}. Podatki so samo za branje.</p>}
       {Object.values(changed).some(Boolean) && <p role="status" className="locked">Imate neshranjene spremembe. Shranite vsako spremenjeno postavko oziroma opombo.</p>}
-      <NotesEditor inspection={data} token={token} onDirty={dirty => mark('notes', dirty)} />
+      <fieldset disabled={finishing} className="inspection-fields"><NotesEditor inspection={data} token={token} onDirty={dirty => mark('notes', dirty)} />
       {data.items.map(item => <ItemEditor key={item.id} item={item} inspectionId={id} token={token} readOnly={data.status !== 'IN_PROGRESS'} onDirty={dirty => mark(item.id, dirty)} />)}
-      {data.status === 'IN_PROGRESS' && <p className="muted">Beleženje napak in zaključek pregleda bosta dodana v naslednjem koraku. Shranjene ocene lahko nadaljujete po ponovni prijavi.</p>}
+      </fieldset>
+      {finishError && <p role="alert" className="alert error">{finishError}</p>}
+      {data.status === 'IN_PROGRESS' && <button className="primary" disabled={finishing || Object.values(changed).some(Boolean)} onClick={() => void finish()}>{finishing ? 'Zaključevanje …' : 'Zaključi pregled'}</button>}
     </>}
   </section>;
 }
@@ -120,7 +131,8 @@ function ItemEditor({ item, inspectionId, token, readOnly, onDirty }: { item: It
   const [saved, setSaved] = useState({ result: item.result, notes: item.notes ?? '' });
   const [busy, setBusy] = useState(false); const [error, setError] = useState('');
   const dirty = result !== saved.result || notes !== saved.notes;
-  useEffect(() => { onDirty(dirty); }, [dirty, onDirty]);
+  const [defectDirty, setDefectDirty] = useState(false);
+  useEffect(() => { onDirty(dirty || busy || defectDirty); }, [dirty, busy, defectDirty, onDirty]);
   async function save() {
     setBusy(true); setError('');
     try {
@@ -134,5 +146,6 @@ function ItemEditor({ item, inspectionId, token, readOnly, onDirty }: { item: It
     </select></div><div className="field"><label htmlFor={`notes-${item.id}`}>Opomba · {item.category}</label><textarea id={`notes-${item.id}`} maxLength={2000} disabled={readOnly || busy} value={notes} onChange={e => setNotes(e.target.value)} /></div></div>
     {error && <p role="alert" className="alert error">{error}</p>}
     {!readOnly && <button className="secondary" disabled={busy || !dirty} onClick={() => void save()}>{busy ? 'Shranjevanje …' : 'Shrani postavko'}</button>}
+    <DefectsEditor initial={item.defects ?? []} token={token} inspectionId={inspectionId} itemId={item.id} result={result} canAdd={!dirty && saved.result === 'FAIL'} readOnly={readOnly} onDirty={setDefectDirty} />
   </section>;
 }

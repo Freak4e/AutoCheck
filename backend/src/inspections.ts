@@ -3,6 +3,7 @@ import { requireRole } from './auth.js';
 import { transaction, type Pool } from './db.js';
 import type { Database } from './profiles.js';
 import { HttpError, uuid } from './errors.js';
+import { customerInspection, inspectionItems } from './customer-records.js';
 
 const scheduleFields = `a.id, a.status, s.starts_at AS "startsAt", s.ends_at AS "endsAt",
  v.id AS "vehicleId", v.registration_number AS "registrationNumber", v.manufacturer, v.model, v.year, v.vin,
@@ -51,7 +52,7 @@ export function inspectorAppointmentRoutes(pool: Pool) {
   return router;
 }
 
-async function ownInspection(db: Database, id: string, inspectorId: string, lock = false) {
+export async function ownInspection(db: Database, id: string, inspectorId: string, lock = false) {
   const row = (await db.query(`SELECT i.id, i.appointment_id AS "appointmentId", a.status,
     i.started_at AS "startedAt", i.completed_at AS "completedAt", i.final_result AS "finalResult", i.notes,
     s.starts_at AS "startsAt", s.ends_at AS "endsAt", v.registration_number AS "registrationNumber", v.manufacturer, v.model, v.year, v.vin
@@ -71,12 +72,15 @@ function notes(value: unknown) {
 
 export function inspectionRoutes(pool: Pool) {
   const router = Router();
+  router.get('/:id', async (req, res, next) => {
+    if (!['CUSTOMER', 'ADMIN'].includes(res.locals.profile.role)) { next(); return; }
+    res.json(await customerInspection(pool, uuid(req.params.id), res.locals.profile.id, res.locals.profile.role === 'ADMIN'));
+  });
   router.use(requireRole('INSPECTOR'));
   router.get('/:id', async (req, res) => {
     const id = uuid(req.params.id);
     const inspection = await ownInspection(pool, id, res.locals.profile.id);
-    const items = (await pool.query(`SELECT id, category, name, sort_order AS "sortOrder", result, notes
-      FROM public.inspection_items WHERE inspection_id = $1 ORDER BY sort_order, id`, [id])).rows;
+    const items = await inspectionItems(pool, id);
     res.json({ ...inspection, items });
   });
   router.patch('/:id', async (req, res) => {

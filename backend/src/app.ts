@@ -6,6 +6,8 @@ import { vehicleRoutes } from './vehicles.js';
 import { bookingRoutes, slotRoutes } from './bookings.js';
 import { HttpError } from './errors.js';
 import { inspectorAppointmentRoutes, inspectionRoutes } from './inspections.js';
+import { customerRecords } from './customer-records.js';
+import { completionRoutes } from './inspection-completion.js';
 
 export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileStore; pool?: Pool; logError?: (error: unknown) => void }) {
   const app = express();
@@ -30,11 +32,13 @@ export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileSto
 
   app.use('/api', requireProfile(deps.profiles));
   if (deps.pool) {
+    app.use('/api', customerRecords(deps.pool));
     app.use('/api/vehicles', vehicleRoutes(deps.pool));
     app.use('/api/slots', slotRoutes(deps.pool));
     app.use('/api/appointments', bookingRoutes(deps.pool));
     app.use('/api/appointments', inspectorAppointmentRoutes(deps.pool));
     app.use('/api/inspections', inspectionRoutes(deps.pool));
+    app.use('/api/inspections', completionRoutes(deps.pool));
   }
   app.get('/api/auth/me', (_req, res) => { res.json(res.locals.profile); });
   app.get('/api/auth/profiles/:id', (req, res) => {
