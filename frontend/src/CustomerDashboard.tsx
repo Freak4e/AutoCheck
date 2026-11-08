@@ -3,6 +3,7 @@ import { api, ApiError } from './api';
 import { type Vehicle, type Slot, type Booking, dateTime, time } from './domain';
 import { VehicleForm } from './VehicleForm';
 import { VehicleHistory } from './VehicleHistory';
+import { MyAppointments } from './MyAppointments';
 
 export function CustomerDashboard({ token }: { token: string }) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -65,6 +66,7 @@ export function CustomerDashboard({ token }: { token: string }) {
       </div>
       <button className="primary" disabled={!vehicleId || !slotId || busy || loading || Boolean(error)} onClick={reserve}>{busy ? 'Potrjevanje …' : 'Potrdi rezervacijo'}</button>
     </section>
+    <MyAppointments token={token} revision={revision} onRefresh={() => setRevision(value => value + 1)} />
     <VehicleHistory vehicles={vehicles} token={token} />
   </div>;
 }

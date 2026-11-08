@@ -36,6 +36,34 @@ async function book(minutes: number, suffix: string) {
   return (await db.query<{ id: string }>('INSERT INTO appointments (slot_id, vehicle_id, customer_id) VALUES ($1, $2, $3) RETURNING id', [slot.id, vehicle.id, ids.customer])).rows[0].id;
 }
 async function start() { return (await request(app).post(`/api/appointments/${appointment}/start`).set(auth()).send({ inspectorId: ids.other }).expect(201)).body.id as string; }
+test('US-07 lists only own open bookings, retains overdue slots and hides unfinished findings', async () => {
+  const future = await book(120, '2');
+  const foreign = await book(240, '3');
+  await db.query('UPDATE appointments SET customer_id = $1 WHERE id = $2', [ids.admin, foreign]);
+  const list = () => request(app).get('/api/appointments').set(auth('customer')).expect(200);
+  const rows = (await list()).body;
+  assert.deepEqual(rows.map((row: { id: string }) => row.id), [appointment, future]);
+  assert.equal(rows[0].delayed, true); assert.equal(rows[1].delayed, false);
+  await request(app).get(`/api/appointments/${foreign}`).set(auth('customer')).expect(404);
+  await request(app).get('/api/appointments/not-a-uuid').set(auth('customer')).expect(400);
+  const id = await start();
+  const active = (await request(app).get(`/api/appointments/${appointment}`).set(auth('customer')).expect(200)).body;
+  assert.equal(active.status, 'IN_PROGRESS'); assert.equal(active.delayed, false);
+  assert.deepEqual(Object.keys(active).sort(), ['id','vehicleId','status','startsAt','endsAt','registrationNumber','manufacturer','model','delayed'].sort());
+  await request(app).get(`/api/inspections/${id}`).set(auth('customer')).expect(404);
+  await complete(id);
+  assert.deepEqual((await list()).body.map((row: { id: string }) => row.id), [future]);
+  await request(app).get(`/api/appointments/${appointment}`).set(auth('customer')).expect(404);
+  await db.query('UPDATE vehicles SET owner_id = $1', [ids.admin]);
+  assert.deepEqual((await list()).body, []);
+});
+test('US-07 customer cannot change status, cancel, reschedule or start a booking', async () => {
+  for (const method of ['patch', 'delete', 'put'] as const) {
+    await request(app)[method](`/api/appointments/${appointment}`).set(auth('customer')).send({ status: 'COMPLETED', slotId: appointment }).expect(403);
+  }
+  await request(app).post(`/api/appointments/${appointment}/start`).set(auth('customer')).expect(403);
+  assert.equal((await db.query('SELECT status FROM appointments WHERE id = $1', [appointment])).rows[0].status, 'BOOKED');
+});
 async function detail(id: string) { return (await request(app).get(`/api/inspections/${id}`).set(auth()).expect(200)).body; }
 async function complete(id: string) {
   await db.query("UPDATE inspections SET completed_at = clock_timestamp(), final_result = 'PASSED' WHERE id = $1", [id]);
@@ -53,7 +81,7 @@ test('US-08 schedule includes booked vehicle data and server-computed eligibilit
 });
 test('US-08/09 role checks protect list, details, takeover and inspection endpoints', async () => {
   for (const role of ['customer', 'admin']) {
-    await request(app).get('/api/appointments').set(auth(role)).expect(role === 'admin' ? 200 : 403);
+    await request(app).get('/api/appointments').set(auth(role)).expect(200);
     await request(app).post(`/api/appointments/${appointment}/start`).set(auth(role)).expect(403);
   }
   await request(app).get('/api/appointments').expect(401);
