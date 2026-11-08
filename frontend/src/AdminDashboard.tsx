@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api, ApiError } from './api';
-import { type Vehicle, type Slot, dateTime, time, stationInstant } from './domain';
+import { type Slot, dateTime, time, stationInstant } from './domain';
+
+import { AdminRecords } from './AdminRecords';
 
 export function AdminDashboard({ token }: { token: string }) {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [start, setStart] = useState('');
   const [loading, setLoading] = useState(true);
@@ -14,8 +15,8 @@ export function AdminDashboard({ token }: { token: string }) {
   const [revision, setRevision] = useState(0);
   useEffect(() => {
     const controller = new AbortController(); setLoading(true); setError('');
-    void Promise.all([api<Vehicle[]>('/vehicles', token, { signal: controller.signal }), api<Slot[]>('/slots', token, { signal: controller.signal })])
-      .then(([nextVehicles, nextSlots]) => { if (!controller.signal.aborted) { setVehicles(nextVehicles); setSlots(nextSlots); } })
+    void api<Slot[]>('/slots', token, { signal: controller.signal })
+      .then((nextSlots) => { if (!controller.signal.aborted) { setSlots(nextSlots); } })
       .catch(failure => { if (!controller.signal.aborted) setError(failure instanceof ApiError ? failure.message : 'Podatkov ni mogoče naložiti. Poskusite ponovno.'); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
@@ -38,12 +39,11 @@ export function AdminDashboard({ token }: { token: string }) {
         <button className="primary" disabled={busy}>{busy ? 'Objavljanje …' : 'Objavi termin'}</button>
       </form>
     </section>
-    <div className="section-heading"><h2>Objavljeni termini</h2><button className="secondary" disabled={loading} onClick={() => setRevision(value => value + 1)}>Osveži evidence</button></div>
+    <div className="section-heading"><h2>Objavljeni termini</h2><button className="secondary" disabled={loading} onClick={() => setRevision(value => value + 1)}>Osveži termine</button></div>
     {error && <p role="alert" className="alert error">{error}</p>}
     {loading ? <p role="status">Nalaganje evidenc …</p> : !error && <>
       {slots.length ? <ul className="slot-list">{slots.map(slot => <li className="panel" key={slot.id}><span>{dateTime(slot.startsAt)}–{time(slot.endsAt)}</span><span className="badge">{slot.available ? 'Prost' : 'Ni na voljo'}</span></li>)}</ul> : <p className="panel">Ni objavljenih terminov.</p>}
-      <h2>Vozila postaje</h2><p className="muted">Bralni vpogled. Pregled rezervacij in ugotovitev dodamo v naslednjih nalogah.</p>
-      {vehicles.length ? <div className="vehicle-grid">{vehicles.map(vehicle => <article className="panel" key={vehicle.id}><p className="registration">{vehicle.registrationNumber}</p><h3>{vehicle.manufacturer} {vehicle.model}</h3><p className="muted">Letnik {vehicle.year}<br /><span className="vin">VIN {vehicle.vin}</span></p></article>)}</div> : <p className="panel">Ni vnesenih vozil.</p>}
     </>}
+    <AdminRecords token={token} />
   </div>;
 }

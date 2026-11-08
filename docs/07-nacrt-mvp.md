@@ -2,9 +2,9 @@
 
 Posodobljeno 8. 11. 2026. [Kanban Board](https://github.com/users/Freak4e/projects/1/views/1) uporablja stolpce To Do, Doing in Done. Posamezna kartica je manjša izvedljiva naloga, ne cela funkcionalnost.
 
-Po združitvi PR za US-07: **29 Done, 2 Doing, 0 To Do**. Danes sta izvedeni #17 in #18 (API in prikaz lastnih odprtih rezervacij).
+Po združitvi zadnjega PR: **31 Done, 0 Doing, 0 To Do**. Implementirane so vse naloge dogovorjenega MVP.
 
-Za večer 8. 11. 2026 ostaneta v Doing #34 (administratorski vmesnik) in #35 (prijavni preizkus s potrditvijo e-pošte), predvidena za ločen PR.
+Zadnji korak zaključi #34 (administratorski vmesnik) in #35 (dejanska registracija, potrditev e-pošte ter prijava).
 
 ## Naloge po združitvi PR
 
@@ -39,11 +39,11 @@ Za večer 8. 11. 2026 ostaneta v Doing #34 (administratorski vmesnik) in #35 (pr
 | [#31](https://github.com/Freak4e/AutoCheck/issues/31) | US-14 | API podrobnosti zaključenega pregleda | Done |
 | [#32](https://github.com/Freak4e/AutoCheck/issues/32) | US-14 | Bralni prikaz ugotovitev | Done |
 | [#33](https://github.com/Freak4e/AutoCheck/issues/33) | US-15 | Bralni API evidenc za administratorja | Done |
-| [#34](https://github.com/Freak4e/AutoCheck/issues/34) | US-15 | Administratorski pregled evidenc | Doing |
-| [#35](https://github.com/Freak4e/AutoCheck/issues/35) | US-01, US-02 | Preverjanje F01 na povezanem Supabase projektu | Doing |
+| [#34](https://github.com/Freak4e/AutoCheck/issues/34) | US-15 | Administratorski pregled evidenc | Done |
+| [#35](https://github.com/Freak4e/AutoCheck/issues/35) | US-01, US-02 | Preverjanje F01 na povezanem Supabase projektu | Done |
 
 ## Preverjanje
 
-82 avtomatskih testov (46 backend, 36 frontend) in gradnji obeh delov so uspešni. [Preverjanje US-07](12-preverjanje-us07.md) pokriva današnji spremembi. Predhodno izveden izoliran preizkus sočasnih transakcij na Supabase je opisan v [poročilu US-11–US-15](11-preverjanje-us11-us15.md). Dejanski prijavni preizkus ostaja v #35.
+87 avtomatskih testov (46 backend, 41 frontend), obe gradnji in dejanski Auth preizkus so uspešni. [Zaključno poročilo](13-preverjanje-zakljucka-mvp.md).
 
 Razvoj poteka na ločenih vejah prek PR z opisnimi commiti in Closes povezavami. Done pomeni uspešno preverjeno in združeno spremembo. F08–F12 ostajajo izven MVP.
