@@ -10,7 +10,7 @@ const slot = { id: 'slot-1', startsAt: '2030-06-15T08:00:00Z', endsAt: '2030-06-
 let fetchMock: ReturnType<typeof vi.fn>;
 const response = (data: unknown, status = 200) => ({ ok: status < 400, status, json: async () => data });
 beforeEach(() => {
-  fetchMock = vi.fn().mockImplementation(async (url: string) => response(url === '/api/vehicles' ? [car] : [slot]));
+  fetchMock = vi.fn().mockImplementation(async (url: string) => response(url === '/api/appointments' ? [] : url === '/api/vehicles' ? [car] : [slot]));
   vi.stubGlobal('fetch', fetchMock);
 });
 afterEach(() => vi.unstubAllGlobals());
@@ -25,7 +25,7 @@ it('loads owned vehicles and populates an editable vehicle form', async () => {
 });
 
 it('explains locked vehicle data and disables booking when no eligible vehicle exists', async () => {
-  fetchMock.mockImplementation(async (url: string) => response(url === '/api/vehicles' ? [{ ...car, canEdit: false, canReserve: false }] : [slot]));
+  fetchMock.mockImplementation(async (url: string) => response(url === '/api/appointments' ? [] : url === '/api/vehicles' ? [{ ...car, canEdit: false, canReserve: false }] : [slot]));
   render(<CustomerDashboard token="token" />);
   expect(await screen.findByText('Podatki so zaklenjeni, ker ima vozilo že rezervacijo.')).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Popravi podatke' })).not.toBeInTheDocument();
@@ -41,9 +41,10 @@ it('shows empty lists and does not permit an incomplete reservation', async () =
 
 it('books selected vehicle/slot, displays confirmation and refreshes availability', async () => {
   const user = userEvent.setup(); let booked = false;
-  fetchMock.mockImplementation(async (url: string) => {
+  fetchMock.mockImplementation(async (url: string, options: { method?: string }) => {
+    if (url === '/api/appointments' && options.method !== 'POST') return response([]);
     if (url === '/api/appointments') { booked = true; return response({ id: 'booking-1', registrationNumber: car.registrationNumber, startsAt: slot.startsAt, endsAt: slot.endsAt, status: 'BOOKED' }, 201); }
-    return response(url === '/api/vehicles' ? [{ ...car, canEdit: !booked, canReserve: !booked }] : booked ? [] : [slot]);
+    return response(url === '/api/appointments' ? [] : url === '/api/vehicles' ? [{ ...car, canEdit: !booked, canReserve: !booked }] : booked ? [] : [slot]);
   });
   render(<CustomerDashboard token="token" />);
   await screen.findByText('Renault Clio');
@@ -57,9 +58,10 @@ it('books selected vehicle/slot, displays confirmation and refreshes availabilit
 
 it('shows a booking conflict and refreshes the available choices', async () => {
   const user = userEvent.setup(); let conflict = false;
-  fetchMock.mockImplementation(async (url: string) => {
+  fetchMock.mockImplementation(async (url: string, options: { method?: string }) => {
+    if (url === '/api/appointments' && options.method !== 'POST') return response([]);
     if (url === '/api/appointments') { conflict = true; return response({ error: 'Termin ni več prost.' }, 409); }
-    return response(url === '/api/vehicles' ? [car] : conflict ? [] : [slot]);
+    return response(url === '/api/appointments' ? [] : url === '/api/vehicles' ? [car] : conflict ? [] : [slot]);
   });
   render(<CustomerDashboard token="token" />); await screen.findByText('Renault Clio');
   await user.selectOptions(screen.getByLabelText('Vozilo za pregled'), car.id); await user.selectOptions(screen.getByLabelText('Prosti termin'), slot.id);

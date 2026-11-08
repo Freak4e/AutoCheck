@@ -23,6 +23,20 @@ export async function customerInspection(db: Database, id: string, owner: string
 export function customerRecords(db: Database) {
   const router = Router();
   for (const path of ['/appointments', '/appointments/:id']) router.get(path, async (req, res, next) => {
+    if (res.locals.profile.role !== 'CUSTOMER') { next(); return; }
+    const id = req.params.id ? uuid(req.params.id) : null;
+    const rows = (await db.query(`SELECT a.id, a.vehicle_id AS "vehicleId", a.status,
+      s.starts_at AS "startsAt", s.ends_at AS "endsAt",
+      v.registration_number AS "registrationNumber", v.manufacturer, v.model,
+      (a.status = 'BOOKED' AND s.starts_at <= now()) AS delayed
+      FROM public.appointments a JOIN public.vehicles v ON v.id = a.vehicle_id
+      JOIN public.appointment_slots s ON s.id = a.slot_id
+      WHERE a.customer_id = $1 AND v.owner_id = $1 AND a.status IN ('BOOKED', 'IN_PROGRESS')
+      ${id ? 'AND a.id = $2' : ''} ORDER BY s.starts_at, a.id`, id ? [res.locals.profile.id, id] : [res.locals.profile.id])).rows;
+    if (id && !rows[0]) throw new HttpError(404, 'Rezervacija ni dostopna.');
+    res.json(id ? rows[0] : rows);
+  });
+  for (const path of ['/appointments', '/appointments/:id']) router.get(path, async (req, res, next) => {
     if (res.locals.profile.role !== 'ADMIN') { next(); return; }
     const id = req.params.id ? uuid(req.params.id) : null;
     const rows = (await db.query(`SELECT a.id, a.vehicle_id AS "vehicleId", a.status, s.starts_at AS "startsAt", s.ends_at AS "endsAt",

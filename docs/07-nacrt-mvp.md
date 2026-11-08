@@ -1,10 +1,10 @@
 # Načrt razvoja MVP
 
-Posodobljeno 7. 11. 2026. [Kanban Board](https://github.com/users/Freak4e/projects/1/views/1) uporablja stolpce To Do, Doing in Done. Posamezna kartica je manjša izvedljiva naloga, ne cela funkcionalnost.
+Posodobljeno 8. 11. 2026. [Kanban Board](https://github.com/users/Freak4e/projects/1/views/1) uporablja stolpce To Do, Doing in Done. Posamezna kartica je manjša izvedljiva naloga, ne cela funkcionalnost.
 
-Po združitvi današnjega PR: **27 Done, 2 Doing, 2 To Do**. Devet današnjih nalog je #25–#33: napake, zaključek, zgodovina in podrobnosti (API/UI) ter administratorski bralni API. Predhodni PR #38 za #19–#24 je združen.
+Po združitvi PR za US-07: **29 Done, 2 Doing, 0 To Do**. Danes sta izvedeni #17 in #18 (API in prikaz lastnih odprtih rezervacij).
 
-Za **8. 11. 2026** sta v Doing #17/#18 (lastne rezervacije); v To Do ostaneta #34 (administratorski vmesnik) in #35 (resnični prijavni preizkus s potrditvijo e-pošte). Te štiri naloge še niso dokončane.
+Za večer 8. 11. 2026 ostaneta v Doing #34 (administratorski vmesnik) in #35 (prijavni preizkus s potrditvijo e-pošte), predvidena za ločen PR.
 
 ## Naloge po združitvi PR
 
@@ -22,8 +22,8 @@ Za **8. 11. 2026** sta v Doing #17/#18 (lastne rezervacije); v To Do ostaneta #3
 | [#14](https://github.com/Freak4e/AutoCheck/issues/14) | US-05 | Administratorski obrazec za termine | Done |
 | [#15](https://github.com/Freak4e/AutoCheck/issues/15) | US-06 | Transakcijska rezervacija termina | Done |
 | [#16](https://github.com/Freak4e/AutoCheck/issues/16) | US-06 | Izbira vozila in rezervacija termina | Done |
-| [#17](https://github.com/Freak4e/AutoCheck/issues/17) | US-07 | API lastnih odprtih rezervacij | Doing |
-| [#18](https://github.com/Freak4e/AutoCheck/issues/18) | US-07 | Prikaz mojih rezervacij in zamude | Doing |
+| [#17](https://github.com/Freak4e/AutoCheck/issues/17) | US-07 | API lastnih odprtih rezervacij | Done |
+| [#18](https://github.com/Freak4e/AutoCheck/issues/18) | US-07 | Prikaz mojih rezervacij in zamude | Done |
 | [#19](https://github.com/Freak4e/AutoCheck/issues/19) | US-08 | API razporeda za preglednika | Done |
 | [#20](https://github.com/Freak4e/AutoCheck/issues/20) | US-08 | Razpored in dovoljena dejanja preglednika | Done |
 | [#21](https://github.com/Freak4e/AutoCheck/issues/21) | US-09 | Transakcijski prevzem pregleda | Done |
@@ -39,11 +39,11 @@ Za **8. 11. 2026** sta v Doing #17/#18 (lastne rezervacije); v To Do ostaneta #3
 | [#31](https://github.com/Freak4e/AutoCheck/issues/31) | US-14 | API podrobnosti zaključenega pregleda | Done |
 | [#32](https://github.com/Freak4e/AutoCheck/issues/32) | US-14 | Bralni prikaz ugotovitev | Done |
 | [#33](https://github.com/Freak4e/AutoCheck/issues/33) | US-15 | Bralni API evidenc za administratorja | Done |
-| [#34](https://github.com/Freak4e/AutoCheck/issues/34) | US-15 | Administratorski pregled evidenc | To Do |
-| [#35](https://github.com/Freak4e/AutoCheck/issues/35) | US-01, US-02 | Preverjanje F01 na povezanem Supabase projektu | To Do |
+| [#34](https://github.com/Freak4e/AutoCheck/issues/34) | US-15 | Administratorski pregled evidenc | Doing |
+| [#35](https://github.com/Freak4e/AutoCheck/issues/35) | US-01, US-02 | Preverjanje F01 na povezanem Supabase projektu | Doing |
 
 ## Preverjanje
 
-77 avtomatskih testov (44 backend, 33 frontend), gradnji obeh delov in izoliran preizkus sočasnih transakcij na Supabase. [Poročilo](11-preverjanje-us11-us15.md) pojasni izide, zaščito podatkov ter razliko med nadzorovanim Auth v testih in še odprtim #35.
+82 avtomatskih testov (46 backend, 36 frontend), gradnji obeh delov in izoliran preizkus sočasnih transakcij na Supabase. [Poročilo](11-preverjanje-us11-us15.md) pojasni izide, zaščito podatkov ter razliko med nadzorovanim Auth v testih in še odprtim #35.
 
 Razvoj poteka na ločenih vejah prek PR z opisnimi commiti in Closes povezavami. Done pomeni uspešno preverjeno in združeno spremembo. F08–F12 ostajajo izven MVP.
