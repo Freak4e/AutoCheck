@@ -44,6 +44,6 @@ Za večer 8. 11. 2026 ostaneta v Doing #34 (administratorski vmesnik) in #35 (pr
 
 ## Preverjanje
 
-82 avtomatskih testov (46 backend, 36 frontend), gradnji obeh delov in izoliran preizkus sočasnih transakcij na Supabase. [Poročilo](11-preverjanje-us11-us15.md) pojasni izide, zaščito podatkov ter razliko med nadzorovanim Auth v testih in še odprtim #35.
+82 avtomatskih testov (46 backend, 36 frontend) in gradnji obeh delov so uspešni. [Preverjanje US-07](12-preverjanje-us07.md) pokriva današnji spremembi. Predhodno izveden izoliran preizkus sočasnih transakcij na Supabase je opisan v [poročilu US-11–US-15](11-preverjanje-us11-us15.md). Dejanski prijavni preizkus ostaja v #35.
 
 Razvoj poteka na ločenih vejah prek PR z opisnimi commiti in Closes povezavami. Done pomeni uspešno preverjeno in združeno spremembo. F08–F12 ostajajo izven MVP.

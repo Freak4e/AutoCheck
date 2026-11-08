@@ -6,7 +6,7 @@
 
 Implementirani so prijava in vloge, vozila, rezervacija terminov, razpored in prevzem, ocenjevanje postavk, napake, zaključek z izračunom izida ter zgodovina in bralne ugotovitve lastnega vozila. Administrator ima pripravljen bralni API. Stranka spremlja tudi lastne odprte rezervacije (US-07) z obvestilom o zamudi. Za večer 8. 11. 2026 ostaneta #34 in #35 v Doing.
 
-Razčlenitev nalog je v [načrtu MVP](docs/07-nacrt-mvp.md). Današnji korak obsega devet nalog **#25–#33**. Po združitvi PR je stanje Kanbana **27 Done, 2 Doing, 2 To Do**. [Preverjanje današnjega koraka](docs/11-preverjanje-us11-us15.md).
+Razčlenitev nalog je v [načrtu MVP](docs/07-nacrt-mvp.md). Današnji korak obsega nalogi **#17 in #18**. Po združitvi PR je stanje Kanbana **29 Done, 2 Doing, 0 To Do**. [Preverjanje današnjega koraka](docs/12-preverjanje-us07.md).
 
 Celotna shema je sestavljena iz `database/schema.sql` in sprememb `01`, `02`, `03` v `database/changes/`. Izvajaj jih po vrsti in samo enkrat. Navodila za prvo pripravo in nadgradnjo so spodaj.
 
@@ -164,4 +164,4 @@ docs/           zasnova, uporabniške zgodbe, wireframe-i, načrt in preverjanje
 
 `.env`, gesel in ključev ne vključujemo v commit; `.env.example` in `package-lock.json` sodita v repozitorij.
 
-Spremljanje rezervacij US-07 je preverjeno v [poro?ilu](docs/12-preverjanje-us07.md).
+Spremljanje rezervacij US-07 je preverjeno v [poročilu](docs/12-preverjanje-us07.md).
