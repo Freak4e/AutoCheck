@@ -73,8 +73,8 @@ it('shows a booking conflict and refreshes the available choices', async () => {
 
 it('admin sees read-only vehicles and can submit a station-time slot', async () => {
   const user = userEvent.setup();
-  fetchMock.mockImplementation(async (url: string, options: { method?: string }) => response(options.method === 'POST' ? slot : url === '/api/vehicles' ? [car] : [slot], options.method === 'POST' ? 201 : 200));
-  render(<AdminDashboard token="token" />); await screen.findByText('Renault Clio');
+  fetchMock.mockImplementation(async (url: string, options: { method?: string }) => response(options.method === 'POST' ? slot : url === '/api/vehicles' ? [car] : url === '/api/slots' ? [slot] : [], options.method === 'POST' ? 201 : 200));
+  render(<AdminDashboard token="token" />); await screen.findByRole('heading', { name: /MB123/ });
   expect(screen.queryByRole('button', { name: 'Popravi podatke' })).not.toBeInTheDocument();
   // datetime-local is edited directly because browser widgets vary by locale.
   const { fireEvent } = await import('@testing-library/react');

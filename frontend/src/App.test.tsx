@@ -19,7 +19,7 @@ beforeEach(() => {
     return { data: { subscription: { unsubscribe: vi.fn() } } };
   });
   auth.signOut.mockImplementation(async () => { change('SIGNED_OUT', null); return { error: null }; });
-  fetchMock = vi.fn().mockImplementation(async (path: string) => ({ ok: true, json: async () => ['/api/vehicles', '/api/slots'].includes(path) ? [] : ({ id: 'test-user', name: 'Ana', role: 'CUSTOMER' }) }));
+  fetchMock = vi.fn().mockImplementation(async (path: string) => ({ ok: true, json: async () => ['/api/inspections', '/api/appointments', '/api/vehicles', '/api/slots'].includes(path) ? [] : ({ id: 'test-user', name: 'Ana', role: 'CUSTOMER' }) }));
   vi.stubGlobal('fetch', fetchMock);
 });
 afterEach(() => { vi.unstubAllGlobals(); });
@@ -35,9 +35,9 @@ it('sends restored session to the backend and opens the customer starting page',
 });
 
 it.each([['INSPECTOR', 'Razpored pregledov', '/razpored'], ['ADMIN', 'Evidence postaje', '/evidence']])('uses persisted %s role for the starting page', async (role, title, path) => {
-  fetchMock.mockImplementation(async (path: string) => ({ ok: true, json: async () => ['/api/vehicles', '/api/slots', '/api/appointments'].includes(path) ? [] : ({ id: 'test-user', name: 'Osebje', role }) }));
+  fetchMock.mockImplementation(async (path: string) => ({ ok: true, json: async () => ['/api/inspections', '/api/appointments', '/api/vehicles', '/api/slots', '/api/appointments'].includes(path) ? [] : ({ id: 'test-user', name: 'Osebje', role }) }));
   render(<App />);
-  expect(await screen.findByRole('heading', { name: title })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { name: title, level: 1 })).toBeInTheDocument();
   expect(window.location.pathname).toBe(path);
 });
 

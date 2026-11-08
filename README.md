@@ -4,9 +4,9 @@
 
 ## Trenutni obseg
 
-Implementirani so prijava in vloge, vozila, rezervacija terminov, razpored in prevzem, ocenjevanje postavk, napake, zaključek z izračunom izida ter zgodovina in bralne ugotovitve lastnega vozila. Administrator ima pripravljen bralni API. Stranka spremlja tudi lastne odprte rezervacije (US-07) z obvestilom o zamudi. Za večer 8. 11. 2026 ostaneta #34 in #35 v Doing.
+Implementiran je celoten dogovorjeni MVP (US-01–US-15): prijava in vloge, vozila, rezervacije, razpored in prevzem, kontrolni seznam, napake, zaključek z izidom, zgodovina ter administratorski bralni vpogled. Prijava je preverjena tudi na povezanem Supabase projektu s potrditvijo e-pošte.
 
-Razčlenitev nalog je v [načrtu MVP](docs/07-nacrt-mvp.md). Današnji korak obsega nalogi **#17 in #18**. Po združitvi PR je stanje Kanbana **29 Done, 2 Doing, 0 To Do**. [Preverjanje današnjega koraka](docs/12-preverjanje-us07.md).
+Razčlenitev nalog je v [načrtu MVP](docs/07-nacrt-mvp.md). Zadnji korak zaključi **#34 in #35**. Po združitvi PR je stanje Kanbana **31 Done, 0 Doing, 0 To Do**. [Zaključno preverjanje](docs/13-preverjanje-zakljucka-mvp.md).
 
 Celotna shema je sestavljena iz `database/schema.sql` in sprememb `01`, `02`, `03` v `database/changes/`. Izvajaj jih po vrsti in samo enkrat. Navodila za prvo pripravo in nadgradnjo so spodaj.
 
@@ -97,7 +97,7 @@ VALUES
 
 Če profila že obstajata, uporabi ciljan `UPDATE public.profiles SET role = 'INSPECTOR' WHERE id = 'DEJANSKI_UUID';` oziroma `ADMIN`. To je ročna priprava osebja. Aplikacija ob ponovni prijavi obstoječega imena ali vloge ne prepiše.
 
-Stranka vnese vozilo, rezervira termin in bere zgodovino ter ugotovitve zaključenih pregledov. Preglednik vidi razpored, prevzame rezervacijo, izrecno shrani ocene/opombe in napake ter potrdi zaključek. Strežnik preveri popolnost, izračuna izid in sprosti pregledno mesto. Zaključenih ugotovitev ni mogoče spreminjati. Administrator ima bralni API; celoten vmesnik evidenc je še v #34.
+Stranka vnese vozilo, rezervira termin in bere zgodovino ter ugotovitve zaključenih pregledov. Preglednik vidi razpored, prevzame rezervacijo, izrecno shrani ocene/opombe in napake ter potrdi zaključek. Strežnik preveri popolnost, izračuna izid in sprosti pregledno mesto. Zaključenih ugotovitev ni mogoče spreminjati. Administrator bere vozila, rezervacije in aktivne ali zaključene preglede vseh strank. Filter vozila poveže pripadajoče zapise.
 
 ## Preverjanje in gradnja
 
@@ -108,7 +108,7 @@ npm --prefix backend run build
 npm --prefix frontend run build
 ```
 
-Običajnih **82 avtomatskih testov** ne potrebuje pravih ključev. Auth je v testih nadzorovan, SQL pa preverjamo v začasnem PostgreSQL okolju PGlite. Kriteriji US-01/US-02 so v [preverjanju F01](docs/08-preverjanje-f01.md), vozila in rezervacije pa v [preverjanju F02/F03](docs/09-preverjanje-f02-f03.md).
+Običajnih **87 avtomatskih testov** ne potrebuje pravih ključev. Auth je v testih nadzorovan, SQL pa preverjamo v začasnem PostgreSQL okolju PGlite. Kriteriji US-01/US-02 so v [preverjanju F01](docs/08-preverjanje-f01.md), vozila in rezervacije pa v [preverjanju F02/F03](docs/09-preverjanje-f02-f03.md).
 
 Dodaten preizkus sočasnosti na bazi iz `backend/.env` zaženeš izrecno:
 
@@ -116,7 +116,7 @@ Dodaten preizkus sočasnosti na bazi iz `backend/.env` zaženeš izrecno:
 npm --prefix backend run test:live
 ```
 
-Preizkus ustvari začasne UUID-zapise za profile, vozila in termine ter jih po zaključku odstrani. Ne ustvarja uporabnih prijavnih računov in ne pošilja e-pošte. Uporablja dejanske transakcije in sočasne PostgreSQL povezave. Na povezanem Supabase projektu je bil uspešno izveden; dejanska registracija s potrditveno e-pošto ostaja v Issue #35.
+Preizkus ustvari začasne UUID-zapise za profile, vozila in termine ter jih po zaključku odstrani. Ne ustvarja uporabnih prijavnih računov in ne pošilja e-pošte. Uporablja dejanske transakcije in sočasne PostgreSQL povezave. Na povezanem Supabase projektu je bil uspešno izveden; dejanska registracija s potrditveno e-pošto je bila dodatno preverjena 8. 11. 2026 (glej zaključno poročilo).
 
 Preveden backend: `npm --prefix backend start`. Predogled prevedenega frontenda: `npm --prefix frontend run preview -- --port 5173`; backend mora teči. To ni navodilo za produkcijsko gostovanje.
 
