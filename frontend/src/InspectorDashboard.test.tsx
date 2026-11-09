@@ -15,6 +15,8 @@ beforeEach(() => {
   fetchMock = vi.fn().mockImplementation(async (url: string, options: { method?: string; body?: string }) => {
     if (url === '/api/appointments') return response(rows);
     if (url.endsWith('/start')) { rows = [{ ...row, status: 'IN_PROGRESS', isMine: true, inspectionId: 'i1', canStart: false, overdue: true }]; return response({ id: 'i1' }, 201); }
+    if (options.method === 'PUT') { const body = JSON.parse(options.body!); data = { ...data, ...body, items: data.items.map(item => ({ ...item, ...body.items.find((i: { id: string }) => i.id === item.id) })) }; return response(data); }
+    if (url.endsWith('/complete')) return response({ status: 'COMPLETED', finalResult: 'PASSED', completedAt: '2020-01-01T11:00:00Z' });
     if (options.method === 'PATCH') {
       const body = JSON.parse(options.body!);
       if (url.includes('/items/')) { const item = data.items.find(i => url.endsWith(i.id))!; Object.assign(item, body); return response(item); }
@@ -30,8 +32,8 @@ it('starts a booking and opens its seven unassessed items', async () => {
   const user = userEvent.setup(); render(<InspectorDashboard token="token" />);
   await user.click(await screen.findByRole('button', { name: 'Začni pregled' }));
   expect(await screen.findByRole('heading', { name: 'Pregled · MB123' })).toBeInTheDocument();
-  expect(screen.getAllByRole('combobox', { name: /^Ocena/ })).toHaveLength(7);
-  expect(screen.getByLabelText('Ocena · Zavore')).toHaveValue('NOT_CHECKED');
+  expect(screen.getAllByRole('radiogroup')).toHaveLength(7);
+  expect(screen.getAllByRole('radio').every(input => !(input as HTMLInputElement).checked)).toBe(true);
   expect(fetchMock).toHaveBeenCalledWith('/api/appointments/a1/start', expect.objectContaining({ method: 'POST', headers: { Authorization: 'Bearer token' } }));
 });
 it('disables new starts during overtime and hides actions for another inspector', async () => {
@@ -49,63 +51,76 @@ it('retains conflict explanation and refreshes the schedule after a competing cl
   expect(await screen.findByRole('alert')).toHaveTextContent('Pregledno mesto je zasedeno');
   expect(fetchMock.mock.calls.filter(call => call[0] === '/api/appointments')).toHaveLength(2);
 });
-it('explicitly saves scores and notes and restores them when reopened', async () => {
+
+async function openEditor() {
   const user = userEvent.setup(); render(<InspectorDashboard token="token" />);
   await user.click(await screen.findByRole('button', { name: 'Začni pregled' }));
-  await user.selectOptions(await screen.findByLabelText('Ocena · Zavore'), 'FAIL');
-  await user.type(screen.getByLabelText('Opomba · Zavore'), 'Preverjeno');
-  await user.click(within(screen.getByRole('region', { name: 'Zavore' })).getByRole('button', { name: 'Shrani postavko' }));
-  await waitFor(() => expect(within(screen.getByRole('region', { name: 'Zavore' })).getByRole('button', { name: 'Shrani postavko' })).toBeDisabled());
-  await user.type(screen.getByLabelText('Splošna opomba pregleda'), 'Opomba pregleda');
-  await user.click(screen.getByRole('button', { name: 'Shrani opombo' }));
-  await waitFor(() => expect(screen.getByRole('button', { name: 'Shrani opombo' })).toBeDisabled());
+  await screen.findByRole('radiogroup', { name: 'Ocena · Zavore' });
+  return user;
+}
+it('shows defect fields only for failed items and saves scores, defects and notes together', async () => {
+  const user = await openEditor();
+  expect(screen.queryByLabelText('Opis napake · Zavore')).not.toBeInTheDocument();
+  await user.click(within(screen.getByRole('region', { name: 'Zavore' })).getByRole('radio', { name: 'Ni v redu' }));
+  expect(screen.getByText('Dopišite opis napake: Zavore.')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Shrani pregled' })).toBeDisabled();
+  await user.type(screen.getByLabelText('Opis napake · Zavore'), 'Obrabljene zavore');
+  await user.selectOptions(screen.getByLabelText('Resnost · Zavore'), 'MAJOR');
+  await user.type(screen.getByLabelText('Splošna opomba pregleda (neobvezno)'), 'Opomba');
+  await user.click(screen.getByRole('button', { name: 'Shrani pregled' }));
+  expect(await screen.findByText('Vse spremembe so shranjene.')).toBeInTheDocument();
+  const saved = JSON.parse(fetchMock.mock.calls.find(([url]) => url.endsWith('/checklist'))![1].body);
+  expect(saved.notes).toBe('Opomba'); expect(saved.items[0]).toMatchObject({ result: 'FAIL', defects: [{ description: 'Obrabljene zavore', severity: 'MAJOR' }] });
   await user.click(screen.getByRole('button', { name: 'Nazaj na razpored' }));
   await user.click(await screen.findByRole('button', { name: 'Nadaljuj pregled' }));
-  expect(await screen.findByLabelText('Ocena · Zavore')).toHaveValue('FAIL');
-  expect(screen.getByLabelText('Opomba · Zavore')).toHaveValue('Preverjeno');
-  expect(screen.getByLabelText('Splošna opomba pregleda')).toHaveValue('Opomba pregleda');
+  expect(await screen.findByLabelText('Opis napake · Zavore')).toHaveValue('Obrabljene zavore');
 });
-it('warns before discarding edits and retains the editor when leaving is cancelled', async () => {
-  const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
-  const onDirty = vi.fn(); const user = userEvent.setup(); render(<InspectorDashboard token="token" onDirtyChange={onDirty} />);
-  await user.click(await screen.findByRole('button', { name: 'Začni pregled' }));
-  await user.selectOptions(await screen.findByLabelText('Ocena · Zavore'), 'PASS');
-  await user.click(screen.getByRole('button', { name: 'Nazaj na razpored' }));
-  expect(confirm).toHaveBeenCalled(); expect(onDirty).toHaveBeenCalledWith(true);
-  expect(screen.getByLabelText('Ocena · Zavore')).toHaveValue('PASS');
-});
-it('opens own completed inspection with disabled inputs and no save actions', async () => {
-  rows = [{ ...row, status: 'COMPLETED', isMine: true, inspectionId: 'i1', canStart: false }];
-  data.status = 'COMPLETED'; data.completedAt = '2020-01-01T11:00:00Z'; data.finalResult = 'PASSED';
-  const user = userEvent.setup(); render(<InspectorDashboard token="token" />);
-  await user.click(await screen.findByRole('button', { name: 'Odpri zaključen pregled' }));
-  expect(await screen.findByLabelText('Ocena · Zavore')).toBeDisabled();
-  expect(screen.queryByRole('button', { name: 'Shrani postavko' })).not.toBeInTheDocument();
-  expect(screen.queryByRole('button', { name: 'Shrani opombo' })).not.toBeInTheDocument();
-});
-
-it('blocks completion for unsaved edits and switches to read-only after confirmation', async () => {
+it('shows missing assessments then saves unsaved edits before completing without waiting for the slot end', async () => {
   vi.spyOn(window, 'confirm').mockReturnValue(true);
-  const original = fetchMock.getMockImplementation() as (url: string, options: { method?: string; body?: string }) => Promise<ReturnType<typeof response>>;
-  fetchMock.mockImplementation(async (url, options) => url.endsWith('/complete') ? response({ status: 'COMPLETED', finalResult: 'PASSED', completedAt: '2020-01-01T11:00:00Z' }) : original(url, options));
-  const user = userEvent.setup(); render(<InspectorDashboard token="token" />);
-  await user.click(await screen.findByRole('button', { name: 'Začni pregled' }));
-  await user.type(await screen.findByLabelText('Splošna opomba pregleda'), 'Opomba');
-  expect(screen.getByRole('button', { name: 'Zaključi pregled' })).toBeDisabled();
-  await user.click(screen.getByRole('button', { name: 'Shrani opombo' }));
-  await waitFor(() => expect(screen.getByRole('button', { name: 'Zaključi pregled' })).toBeEnabled());
-  await user.click(screen.getByRole('button', { name: 'Zaključi pregled' }));
+  data.startsAt = new Date(Date.now() - 60000).toISOString(); data.endsAt = new Date(Date.now() + 29 * 60000).toISOString();
+  const user = await openEditor();
+  expect(screen.getByRole('button', { name: 'Shrani in zaključi' })).toBeDisabled();
+  for (const radio of screen.getAllByRole('radio', { name: 'V redu' })) await user.click(radio);
+  await user.type(screen.getByLabelText('Splošna opomba pregleda (neobvezno)'), 'Končano');
+  await user.click(screen.getByRole('button', { name: 'Shrani in zaključi' }));
   expect(await screen.findByText(/Zaključen pregled · PASSED/)).toBeInTheDocument();
-  expect(screen.getByLabelText('Ocena · Zavore')).toBeDisabled();
-  expect(screen.queryByRole('button', { name: 'Zaključi pregled' })).not.toBeInTheDocument();
+  expect(fetchMock.mock.calls.findIndex(([url]) => url.endsWith('/checklist'))).toBeLessThan(fetchMock.mock.calls.findIndex(([url]) => url.endsWith('/complete')));
+  expect(screen.getAllByRole('radio').every(input => (input as HTMLInputElement).matches(':disabled'))).toBe(true);
+  expect(screen.queryByRole('button', { name: 'Shrani in zaključi' })).not.toBeInTheDocument();
 });
-it('retains editable findings after incomplete-completion rejection', async () => {
+it('keeps draft on failed save and never calls complete', async () => {
   vi.spyOn(window, 'confirm').mockReturnValue(true);
+  data.items.forEach(item => item.result = 'PASS');
   const original = fetchMock.getMockImplementation() as (url: string, options: { method?: string; body?: string }) => Promise<ReturnType<typeof response>>;
-  fetchMock.mockImplementation(async (url, options) => url.endsWith('/complete') ? response({ error: 'Pregled ni popoln.' }, 409) : original(url, options));
-  const user = userEvent.setup(); render(<InspectorDashboard token="token" />);
-  await user.click(await screen.findByRole('button', { name: 'Začni pregled' }));
-  await user.click(await screen.findByRole('button', { name: 'Zaključi pregled' }));
-  expect(await screen.findByRole('alert')).toHaveTextContent('Pregled ni popoln');
-  expect(screen.getByLabelText('Ocena · Zavore')).toBeEnabled();
+  fetchMock.mockImplementation((url, options) => url.endsWith('/checklist') ? response({ error: 'Shranjevanje ni uspelo.' }, 503) : original(url, options));
+  const user = await openEditor(); await user.type(screen.getByLabelText('Splošna opomba pregleda (neobvezno)'), 'Ohrani');
+  await user.click(screen.getByRole('button', { name: 'Shrani in zaključi' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Shranjevanje ni uspelo.');
+  expect(screen.getByLabelText('Splošna opomba pregleda (neobvezno)')).toHaveValue('Ohrani');
+  expect(fetchMock.mock.calls.some(([url]) => url.endsWith('/complete'))).toBe(false);
+});
+it('retains saved editable findings when completion is rejected', async () => {
+  vi.spyOn(window, 'confirm').mockReturnValue(true); data.items.forEach(item => item.result = 'PASS');
+  const original = fetchMock.getMockImplementation() as (url: string, options: { method?: string; body?: string }) => Promise<ReturnType<typeof response>>;
+  fetchMock.mockImplementation((url, options) => url.endsWith('/complete') ? response({ error: 'Pregled ni popoln.' }, 409) : original(url, options));
+  const user = await openEditor(); await user.click(screen.getByRole('button', { name: 'Shrani in zaključi' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Pregled ni popoln.');
+  expect(screen.getAllByRole('radio')[0]).toBeEnabled();
+});
+it('requires confirmation before discarding defect descriptions when switching to PASS', async () => {
+  const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+  data.items[0] = { ...data.items[0], result: 'FAIL', defects: [{ id: 'd1', description: 'Napaka', severity: 'MINOR' }, { id: 'd2', description: 'Druga', severity: 'MAJOR' }] };
+  const user = await openEditor(); const pass = within(screen.getByRole('region', { name: 'Zavore' })).getByRole('radio', { name: 'V redu' });
+  await user.click(pass); expect(screen.getByLabelText('Opis napake · Zavore')).toHaveValue('Napaka');
+  expect(screen.getByLabelText('Opis napake · Zavore (2)')).toHaveValue('Druga');
+  confirm.mockReturnValue(true); await user.click(pass);
+  expect(screen.queryByLabelText('Opis napake · Zavore')).not.toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: 'Shrani pregled' })); await screen.findByText('Vse spremembe so shranjene.');
+  expect(data.items[0].defects).toEqual([]);
+});
+it('warns before leaving an unsaved checklist', async () => {
+  const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false); const user = await openEditor();
+  await user.click(screen.getAllByRole('radio', { name: 'V redu' })[0]);
+  await user.click(screen.getByRole('button', { name: 'Nazaj na razpored' }));
+  expect(confirm).toHaveBeenCalled(); expect(screen.getByRole('heading', { name: 'Pregled · MB123' })).toBeInTheDocument();
 });

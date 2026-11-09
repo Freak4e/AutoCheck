@@ -89,8 +89,8 @@ it('keeps unsaved inspection notes through a token refresh of the same user', as
   } }));
   const user = userEvent.setup(); render(<App />);
   await user.click(await screen.findByRole('button', { name: 'Nadaljuj pregled' }));
-  await user.type(await screen.findByLabelText('Splošna opomba pregleda'), 'Neshranjena opomba');
+  await user.type(await screen.findByLabelText('Splošna opomba pregleda (neobvezno)'), 'Neshranjena opomba');
   act(() => change('TOKEN_REFRESHED', { ...session, access_token: 'new-token' }));
   await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/auth/profile', expect.objectContaining({ headers: expect.objectContaining({ Authorization: 'Bearer new-token' }) })));
-  expect(screen.getByLabelText('Splošna opomba pregleda')).toHaveValue('Neshranjena opomba');
+  expect(screen.getByLabelText('Splošna opomba pregleda (neobvezno)')).toHaveValue('Neshranjena opomba');
 });

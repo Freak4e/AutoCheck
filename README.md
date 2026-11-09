@@ -97,7 +97,7 @@ VALUES
 
 Če profila že obstajata, uporabi ciljan `UPDATE public.profiles SET role = 'INSPECTOR' WHERE id = 'DEJANSKI_UUID';` oziroma `ADMIN`. To je ročna priprava osebja. Aplikacija ob ponovni prijavi obstoječega imena ali vloge ne prepiše.
 
-Stranka vnese vozilo, rezervira termin in bere zgodovino ter ugotovitve zaključenih pregledov. Preglednik vidi razpored, prevzame rezervacijo, izrecno shrani ocene/opombe in napake ter potrdi zaključek. Strežnik preveri popolnost, izračuna izid in sprosti pregledno mesto. Zaključenih ugotovitev ni mogoče spreminjati. Administrator bere vozila, rezervacije in aktivne ali zaključene preglede vseh strank. Filter vozila poveže pripadajoče zapise.
+Stranka vnese vozilo, rezervira termin in bere zgodovino ter ugotovitve zaključenih pregledov. Preglednik prevzame rezervacijo in na seznamu za vsako postavko izbere **V redu** ali **Ni v redu**. Pri neustrezni postavki vpiše opis napake ter izbere **Minor** ali **Major**. **Shrani pregled** shrani vse vnesene podatke hkrati; **Shrani in zaključi** jih najprej shrani in nato zaključi pregled. Nad seznamom so navedene še neocenjene postavke in manjkajoči opisi. Na konec 30-minutnega termina ni treba čakati. Strežnik preveri popolnost, izračuna izid in sprosti pregledno mesto. Zaključenih ugotovitev ni mogoče spreminjati. Administrator bere vozila, rezervacije in aktivne ali zaključene preglede vseh strank. Filter vozila poveže pripadajoče zapise.
 
 ## Preverjanje in gradnja
 

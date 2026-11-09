@@ -12,6 +12,8 @@ import { completionRoutes } from './inspection-completion.js';
 export function createApp(deps: { verifyToken: VerifyToken; profiles: ProfileStore; pool?: Pool; logError?: (error: unknown) => void }) {
   const app = express();
   app.disable('x-powered-by');
+  // A checklist combines all previously separate, individually bounded notes.
+  app.use('/api/inspections/:id/checklist', express.json({ limit: '256kb' }));
   app.use(express.json({ limit: '10kb' }));
   app.get('/api/health', (_req, res) => { res.json({ status: 'ok' }); });
   app.use('/api', (_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
