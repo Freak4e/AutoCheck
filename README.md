@@ -6,7 +6,7 @@
 
 Implementiran je celoten dogovorjeni MVP (US-01–US-15): prijava in vloge, vozila, rezervacije, razpored in prevzem, kontrolni seznam, napake, zaključek z izidom, zgodovina ter administratorski bralni vpogled. Prijava je preverjena tudi na povezanem Supabase projektu s potrditvijo e-pošte.
 
-Razčlenitev nalog je v [načrtu MVP](docs/07-nacrt-mvp.md). Zadnji korak zaključi **#34 in #35**. Po združitvi PR je stanje Kanbana **31 Done, 0 Doing, 0 To Do**. [Zaključno preverjanje](docs/13-preverjanje-zakljucka-mvp.md).
+Razvojne naloge in napredek spremljamo na [GitHub Project Kanban tabli](https://github.com/users/Freak4e/projects/1). Naloge so opisane v [Issues](https://github.com/Freak4e/AutoCheck/issues), spremembe pa v povezanih [Pull Requestih](https://github.com/Freak4e/AutoCheck/pulls).
 
 Celotna shema je sestavljena iz `database/schema.sql` in sprememb `01`, `02`, `03` v `database/changes/`. Izvajaj jih po vrsti in samo enkrat. Navodila za prvo pripravo in nadgradnjo so spodaj.
 
@@ -21,7 +21,7 @@ Docker in lokalna baza nista potrebna. Podatki in računi ostanejo na Supabase t
 ## 1. Priprava Supabase
 
 1. Ustvari oziroma odpri projekt Supabase.
-2. V **SQL Editorju** novega projekta po vrsti enkrat izvedi [schema.sql](database/schema.sql), [spremembo 01](database/changes/01-vehicles-slots-appointments.sql), [spremembo 02](database/changes/02-inspections-checklist.sql) in [spremembo 03](database/changes/03-defects.sql). Na obstoječem projektu izvedi samo manjkajoče spremembe; nobene datoteke ne izvajaj ponovno čez obstoječe tabele. Začetna shema in 01 sta bili na povezani bazi izvedeni 5. 11. 2026; 02 in 03 se izvedeta ob uvedbi PR za zaključevanje in zgodovino.
+2. V **SQL Editorju** novega projekta po vrsti enkrat izvedi [schema.sql](database/schema.sql), [spremembo 01](database/changes/01-vehicles-slots-appointments.sql), [spremembo 02](database/changes/02-inspections-checklist.sql) in [spremembo 03](database/changes/03-defects.sql). Na obstoječem projektu izvedi samo manjkajoče spremembe; nobene datoteke ne izvajaj ponovno čez obstoječe tabele.
 3. V nastavitvah **Data API** izključi Data API. Poslovni podatki potujejo prek Express API. Auth ostane omogočen. Profili dodatno uporabljajo RLS brez pravil za neposreden dostop.
 4. V **Authentication → Sign In / Providers** omogoči e-pošto in geslo. Nastavitev **Confirm email** določa, ali mora uporabnik pred prijavo potrditi e-pošto. Aplikacija upošteva oba načina.
 5. V **Authentication → URL Configuration** nastavi **Site URL** na `http://localhost:5173` in isti naslov dodaj med dovoljene preusmeritve.
@@ -108,15 +108,16 @@ npm --prefix backend run build
 npm --prefix frontend run build
 ```
 
-Običajnih **87 avtomatskih testov** ne potrebuje pravih ključev. Auth je v testih nadzorovan, SQL pa preverjamo v začasnem PostgreSQL okolju PGlite. Kriteriji US-01/US-02 so v [preverjanju F01](docs/08-preverjanje-f01.md), vozila in rezervacije pa v [preverjanju F02/F03](docs/09-preverjanje-f02-f03.md).
+Avtomatski testi ne potrebujejo pravih ključev. Auth je v testih nadzorovan, SQL pa preverjamo v začasnem PostgreSQL okolju PGlite. Testi pokrivajo [kriterije sprejema uporabniških zgodb](docs/05-uporabniske-zgodbe.md): prijavo in vloge, lastništvo podatkov, rezervacije, potek pregleda, izračun izida in bralni dostop do evidenc. Rezultati preverjanja sprememb so navedeni v pripadajočih PR-jih.
 
 Dodaten preizkus sočasnosti na bazi iz `backend/.env` zaženeš izrecno:
 
 ```powershell
 npm --prefix backend run test:live
+npm --prefix backend run test:live:inspections
 ```
 
-Preizkus ustvari začasne UUID-zapise za profile, vozila in termine ter jih po zaključku odstrani. Ne ustvarja uporabnih prijavnih računov in ne pošilja e-pošte. Uporablja dejanske transakcije in sočasne PostgreSQL povezave. Na povezanem Supabase projektu je bil uspešno izveden; dejanska registracija s potrditveno e-pošto je bila dodatno preverjena 8. 11. 2026 (glej zaključno poročilo).
+Preizkusa ustvarita začasne testne podatke in jih po zaključku odstranita. Ne ustvarjata uporabnih prijavnih računov in ne pošiljata e-pošte. Uporabljata dejanske transakcije in sočasne PostgreSQL povezave. Dejanski prijavni potek preveriš z registracijo, potrditvijo prejete e-pošte, prijavo, osvežitvijo strani in odjavo; za osebje uporabi računa z vlogama `INSPECTOR` in `ADMIN`.
 
 Preveden backend: `npm --prefix backend start`. Predogled prevedenega frontenda: `npm --prefix frontend run preview -- --port 5173`; backend mora teči. To ni navodilo za produkcijsko gostovanje.
 
@@ -134,7 +135,7 @@ Preveden backend: `npm --prefix backend start`. Predogled prevedenega frontenda:
 frontend/       React vmesnik, seja Supabase, obrazci, testi
 backend/        Express API, preverjanje prijave in vlog, SQL profili, testi
 database/       začetna SQL shema za trenutno implementirani obseg
-docs/           zasnova, uporabniške zgodbe, wireframe-i, načrt in preverjanje
+docs/           zasnova, uporabniške zgodbe, wireframe-i in arhitekturne odločitve
 ```
 
 ## Dokumentacija
@@ -145,23 +146,5 @@ docs/           zasnova, uporabniške zgodbe, wireframe-i, načrt in preverjanje
 4. [Arhitektura in tehnološki sklad](docs/04-arhitektura-in-tehnoloski-sklad.md)
 5. [Uporabniške zgodbe in kriteriji sprejema](docs/05-uporabniske-zgodbe.md)
 6. [Wireframe-i](docs/06-wireframes.md)
-7. [Načrt MVP in GitHub naloge](docs/07-nacrt-mvp.md)
-8. [Preverjanje F01](docs/08-preverjanje-f01.md)
-9. [Preverjanje F02/F03](docs/09-preverjanje-f02-f03.md)
-10. [Preverjanje US-08–US-10](docs/10-preverjanje-us08-us10.md)
-11. [Preverjanje US-11–US-15](docs/11-preverjanje-us11-us15.md)
 
 [ADR-ji](docs/adr/) pojasnjujejo arhitekturne odločitve. Dokumenti prvih dveh nalog opisujejo celoten načrtovani MVP; zgornji trenutni obseg pove, kaj je že implementirano.
-
-## Razvojni postopek: GitHub Flow
-
-1. Nalogo premaknemo iz `To Do` v `Doing`.
-2. Iz posodobljene `main` odpremo vejo, npr. `feat/us03-vnos-vozila`.
-3. Implementiramo izbrano nalogo in preverimo kriterije njene uporabniške zgodbe.
-4. Ustvarimo opisne commite, npr. `feat: dodaj API za lastna vozila (#12)`.
-5. Odpremo PR z opisom sprememb, preverjanj in povezavo `Closes #12`.
-6. Po preverjanju združimo PR v `main` in nalogo označimo `Done`.
-
-`.env`, gesel in ključev ne vključujemo v commit; `.env.example` in `package-lock.json` sodita v repozitorij.
-
-Spremljanje rezervacij US-07 je preverjeno v [poročilu](docs/12-preverjanje-us07.md).
