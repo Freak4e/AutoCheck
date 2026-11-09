@@ -58,6 +58,30 @@ input[aria-invalid=true] { border-color: #b74736; }
 .loading { min-height: 65vh; padding: 100px; text-align: center; }
 .dashboard { margin-top: 35px; }
 .inspection-fields { border: 0; padding: 0; margin: 0; min-width: 0; }
+.checklist { border: 1px solid #dfe5d8; border-radius: 12px; overflow: hidden; background: white; }
+.checklist-row { padding: 18px 22px; border-bottom: 1px solid #e3e8df; }
+.checklist-row:last-child { border-bottom: 0; }
+.checklist-row.result-fail { background: #fffaf5; }
+.checklist-line { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.checklist-line h3 { margin: 0; font-size: 16px; }
+.checklist-line p { margin: 5px 0 0; }
+.checklist-number { display: inline-block; color: #7b8a73; min-width: 28px; }
+.checklist-choices { display: flex; gap: 10px; flex-shrink: 0; }
+.checklist-choices label { display: flex; align-items: center; gap: 8px; border: 1px solid #cdd9c5; border-radius: 7px; padding: 12px; cursor: pointer; background: white; }
+.checklist-choices label:has(input:checked) { background: #e7f1df; border-color: #527b3c; }
+.checklist-choices input { width: 19px; height: 19px; margin: 0; padding: 0; accent-color: #315c32; }
+.checklist-defects { margin-top: 18px; }
+.checklist-defect { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
+.checklist-defect .field { margin-bottom: 10px; }
+.checklist-progress { padding: 15px 20px; margin: 20px 0; background: #eef3e8; border-radius: 10px; }
+.checklist-progress p { margin: 6px 0 0; font-size: 14px; }
+.inspection-notes { margin-top: 24px; }
+.inspection-savebar { position: sticky; bottom: 0; background: #fffffff5; border-top: 1px solid #d5dfce; padding: 16px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .checklist-line { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .checklist-defect { grid-template-columns: 1fr; gap: 6px; }
+  .checklist-row { padding: 16px; }
+}
 .defects { margin-top: 22px; border-top: 1px solid #dfe5db; padding-top: 12px; }
 .section-heading, .actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .actions { justify-content: flex-start; flex-wrap: wrap; }

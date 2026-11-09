@@ -160,6 +160,45 @@ test('new tables block direct Supabase client access', async () => {
 });
 
 async function grade(id: string, result = 'PASS') { await db.query('UPDATE inspection_items SET result = $2 WHERE inspection_id = $1', [id, result]); }
+test('checklist saves all scores, multiple defects and notes together; retry does not duplicate defects', async () => {
+  const id = await start(); const current = await detail(id);
+  const body = { notes: ' General ', items: current.items.map((item: { id: string }, index: number) => ({ id: item.id, notes: ' Item ', result: index ? 'PASS' : 'FAIL', defects: index ? [] : [{ description: ' Minor ', severity: 'MINOR' }, { description: ' Major ', severity: 'MAJOR' }] })) };
+  for (let n = 0; n < 2; n++) await request(app).put(`/api/inspections/${id}/checklist`).set(auth()).send(body).expect(200);
+  const saved = await detail(id); assert.equal(saved.notes, 'General'); assert.equal(saved.items[0].notes, 'Item'); assert.equal(saved.items[0].defects.length, 2);
+  assert.equal((await db.query('SELECT * FROM defects')).rows.length, 2);
+  body.items[0].result = 'PASS'; body.items[0].defects = [];
+  await request(app).put(`/api/inspections/${id}/checklist`).set(auth()).send(body).expect(200);
+  assert.equal((await db.query('SELECT * FROM defects')).rows.length, 0);
+});
+test('invalid or foreign checklist leaves all saved data intact', async () => {
+  const id = await start(); const before = await detail(id);
+  const items = before.items.map((item: { id: string }) => ({ id: item.id, result: 'PASS', notes: null, defects: [] }));
+  for (const invalid of [items.slice(1), [...items.slice(1), items[1]], [...items.slice(0, -1), { ...items[0], id: '10000000-0000-4000-8000-000000000099' }], [...items.slice(0, -1), { ...items.at(-1), result: 'FAIL' }], [...items.slice(0, -1), { ...items.at(-1), result: 'FAIL', defects: [{ description: ' ', severity: 'MINOR' }] }], [...items.slice(0, -1), { ...items.at(-1), result: 'FAIL', defects: [{ description: 'Bad', severity: 'OTHER' }] }]]) {
+    await request(app).put(`/api/inspections/${id}/checklist`).set(auth()).send({ notes: 'Do not save', items: invalid }).expect(400);
+    assert.deepEqual(await detail(id), before);
+  }
+});
+test('checklist respects roles, inspector ownership and completed immutability', async () => {
+  const id = await start(); const current = await detail(id); const body = { notes: null, items: current.items.map((item: { id: string }) => ({ id: item.id, result: 'PASS', defects: [] })) };
+  for (const role of ['customer', 'admin', 'other']) await request(app).put(`/api/inspections/${id}/checklist`).set(auth(role)).send(body).expect(role === 'other' ? 404 : 403);
+  await request(app).put(`/api/inspections/${id}/checklist`).send(body).expect(401);
+  await request(app).put(`/api/inspections/${id}/checklist`).set(auth()).send(body).expect(200);
+  await request(app).post(`/api/inspections/${id}/complete`).set(auth()).expect(200);
+  await request(app).put(`/api/inspections/${id}/checklist`).set(auth()).send(body).expect(409);
+});
+test('inspection can finish before the end of its thirty-minute slot', async () => {
+  appointment = await book(-1, '2'); const id = await start(); const current = await detail(id);
+  assert.ok(Date.parse(current.endsAt) > Date.now());
+  await request(app).put(`/api/inspections/${id}/checklist`).set(auth()).send({ notes: null, items: current.items.map((item: { id: string }) => ({ id: item.id, result: 'PASS', defects: [] })) }).expect(200);
+  const result = await request(app).post(`/api/inspections/${id}/complete`).set(auth()).expect(200);
+  assert.equal(result.body.finalResult, 'PASSED'); assert.ok(Date.parse(result.body.completedAt) < Date.parse(current.endsAt));
+});
+test('combined checklist accepts existing long notes without the old per-request size limit', async () => {
+  const id = await start(); const current = await detail(id);
+  const body = { notes: 'č'.repeat(2000), items: current.items.map((item: { id: string }) => ({ id: item.id, result: 'PASS', notes: 'ž'.repeat(2000), defects: [] })) };
+  const result = await request(app).put(`/api/inspections/${id}/checklist`).set(auth()).send(body).expect(200);
+  assert.equal(result.body.items[0].notes.length, 2000); assert.equal(result.body.notes.length, 2000);
+});
 async function addDefect(id: string, itemId: string, severity = 'MINOR') {
   return (await request(app).post(`/api/inspections/${id}/items/${itemId}/defects`).set(auth()).send({ description: ' Zavorna napaka ', severity }).expect(201)).body;
 }
